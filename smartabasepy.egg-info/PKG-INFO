@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: smartabasepy
+Version: 0.1
+Home-page: https://github.com/brandonyach/smartabasepy
+Author: Brandon Yach
+Author-email: yachb35@gmail.com
+License-Expression: MIT
+Requires-Dist: requests
+Requires-Dist: pandas
+Requires-Dist: keyring
+Dynamic: author
+Dynamic: author-email
+Dynamic: home-page

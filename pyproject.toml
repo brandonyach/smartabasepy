@@ -1,0 +1,10 @@
+[project]
+name = "smartabasepy"
+version = "0.1"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = [
+    "requests",
+    "pandas",
+    "keyring"
+]
