@@ -4,7 +4,14 @@ version = "0.1"
 license = "MIT"
 license-files = ["LICENSE"]
 dependencies = [
-    "requests",
-    "pandas",
-    "keyring"
+     "requests", 
+    "requests-toolbelt",
+    "pandas", 
+    "keyring",
+    "os",
+    "tqdm",
+    "typing",
+    "datetime",
+    "hashlib",
+    "mimetype"
 ]

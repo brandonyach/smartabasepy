@@ -1,5 +1,5 @@
 # smartabasepy
-A Python wrapper for the Teamworks AMS API. Work in progress—stay tuned!
+A Python wrapper for the Teamworks AMS (Athlete Management System) API. Work in progress — stay tuned!
 
 ## Installation
 ```bash

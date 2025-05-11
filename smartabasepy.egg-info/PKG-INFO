@@ -5,9 +5,11 @@ Home-page: https://github.com/brandonyach/smartabasepy
 Author: Brandon Yach
 Author-email: yachb35@gmail.com
 License-Expression: MIT
+Description-Content-Type: text/markdown
 Requires-Dist: requests
 Requires-Dist: pandas
 Requires-Dist: keyring
 Dynamic: author
 Dynamic: author-email
+Dynamic: description-content-type
 Dynamic: home-page
