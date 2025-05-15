@@ -1,7 +1,7 @@
 import os
 from typing import Optional, List, Tuple, Union
 from datetime import datetime
-from .utils import AMSError, _raise_ams_error
+from .utils import AMSError
 
 
 def _validate_user_filter_key(user_key: Optional[str]) -> None:
@@ -83,7 +83,7 @@ def _validate_dates(
         start = datetime.strptime(start_date, date_format)
         end = datetime.strptime(end_date, date_format)
     except ValueError:
-        raise ValueError("start_date and end_date must be in DD/MM/YYYY format.")
+        raise ValueError(f"start_date '{start_date}' and end_date '{end_date}' must be in DD/MM/YYYY format")
     if start > end:
-        raise ValueError("start_date cannot be after end_date.")
+        raise ValueError(f"start_date '{start_date}' cannot be after end_date '{end_date}'.")
     return start, end

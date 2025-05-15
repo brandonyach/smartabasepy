@@ -2,9 +2,8 @@ from datetime import datetime
 from pandas import DataFrame
 from typing import Optional, List, Dict, Any
 from tqdm import tqdm
-from .file_ import _download_attachment
+from .file_main import _download_attachment
 from .utils import AMSError
-
 
 
 def _process_events_to_rows(
@@ -107,7 +106,6 @@ def _process_events_to_rows(
         option.attachment_count = attachment_count
     
     return rows
-
 
 
 def _process_profile_rows(

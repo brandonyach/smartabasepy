@@ -5,18 +5,28 @@ from .export_validate import _validate_user_filter_key
 class UserFilter:
     """Filter for selecting users in user data export.
 
-    Defines criteria for filtering users based on a key (e.g., username, email) and value.
+    Defines criteria for filtering users retrieved by the `get_user` function, allowing
+    users to narrow results based on a user attribute (e.g., username, email, group) and
+    corresponding value(s). Validates the filter key to ensure it is one of the supported
+    options.
 
     Args:
-        user_key (Optional[str]): The type of filter ('username', 'email', 'group', 'about').
-        user_value (Optional[Union[str, List[str]]]): The value(s) to filter by (e.g., a username, group name).
+        user_key (Optional[str]): The user attribute to filter by, one of 'username',
+            'email', 'group', or 'about'. If None, no filtering is applied. Defaults to None.
+        user_value (Optional[Union[str, List[str]]]): The value(s) to filter by, such as a
+            username, email, or group name. Can be a single string or a list of strings.
+            If None, no filtering is applied. Defaults to None.
 
     Attributes:
         user_key (Optional[str]): The filter key.
         user_value (Optional[Union[str, List[str]]]): The filter value(s).
 
     Raises:
-        ValueError: If the user_key is invalid.
+        ValueError: If `user_key` is not one of 'username', 'email', 'group', or 'about'.
+
+    Examples:
+        >>> from smartabasepy import UserFilter
+        >>> filter = UserFilter(user_key = "group", user_value = "Example Group A")
     """
     def __init__(
         self, 

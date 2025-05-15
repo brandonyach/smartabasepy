@@ -81,36 +81,51 @@ def _filter_by_about(
     return df[df["about"].isin(filter_values)]
 
 
-def _map_user_updates(
-    row: pd.Series,
-    user_data: Dict,
-    column_mapping: Dict[str, str]
-) -> Dict:
-    """Map columns from a DataFrame row to API fields for updating a user.
+
+def _map_user_updates(source: Union[pd.Series, Dict], user_data: Dict, column_mapping: Optional[Dict[str, str]] = None) -> Dict:
+    """Map updates to a user data dictionary for API submission.
 
     Args:
-        row (pd.Series): A row from the mapping DataFrame containing update values.
-        user_data (Dict): The existing user data from /api/v2/person/get to preserve unchanged fields.
-        column_mapping (Dict[str, str]): Mapping of DataFrame columns to API field names (e.g., {'first_name': 'firstName'}).
+        source (Union[pd.Series, Dict]): Source of updates, either a DataFrame row (pd.Series) or a dictionary of updates.
+        user_data (Dict): The existing user data dictionary to update (e.g., from /api/v2/person/get).
+        column_mapping (Optional[Dict[str, str]]): Mapping of source keys to API field names (e.g., {'first_name': 'firstName'}).
+            If None, assumes source is a dictionary with API field names as keys.
 
     Returns:
-        Dict: The updated user data dictionary with new values from the row.
+        Dict: The updated user data dictionary with new values applied.
+
+    Raises:
+        TypeError: If the source is neither a pandas Series nor a dictionary.
+        ValueError: If column_mapping is required but not provided.
     """
     updated_data = user_data.copy()
-    for df_col, api_field in column_mapping.items():
-        if df_col in row:
-            if api_field == "active" and pd.notna(row[df_col]):
-                # Preserve boolean type for active
-                updated_data[api_field] = bool(row[df_col])
-            elif pd.notna(row[df_col]):
-                updated_data[api_field] = str(row[df_col])
+    
+    if isinstance(source, pd.Series):
+        if column_mapping is None:
+            raise ValueError("column_mapping is required when source is a pandas Series")
+        for df_col, api_field in column_mapping.items():
+            if df_col in source:
+                if api_field == "active" and pd.notna(source[df_col]):
+                    updated_data[api_field] = bool(source[df_col])
+                elif pd.notna(source[df_col]):
+                    updated_data[api_field] = str(source[df_col])
+                else:
+                    updated_data[api_field] = ""
+    elif isinstance(source, dict):
+        for key, value in source.items():
+            api_field = column_mapping.get(key, key) if column_mapping else key
+            if api_field == "active" and value is not None:
+                updated_data[api_field] = bool(value)
             else:
-                updated_data[api_field] = ""
+                updated_data[api_field] = str(value) if value is not None else ""
+    else:
+        raise TypeError("Source must be a pandas Series or a dictionary")
+    
     return updated_data
 
 
 
-def _match_users_to_mapping(
+def _match_user_ids(
     mapping_df: DataFrame,
     user_df: DataFrame,
     user_key: str,
@@ -136,8 +151,8 @@ def _match_users_to_mapping(
     if user_key == "about":
         user_df = user_df.copy()
         user_df["about"] = user_df["firstName"].str.strip() + " " + user_df["lastName"].str.strip()
-        user_df["about"] = user_df["about"].str.lower()  # Normalize case
-        mapping_df[user_key] = mapping_df[user_key].str.strip().str.lower()  # Normalize case
+        user_df["about"] = user_df["about"].str.lower() 
+        mapping_df[user_key] = mapping_df[user_key].str.strip().str.lower()  
         key_column = "about"
     elif user_key == "email":
         key_column = "emailAddress"
@@ -151,11 +166,6 @@ def _match_users_to_mapping(
         right_on=key_column,
         how="left"
     )
-
-    # Debug: Log matched users and user_id types
-    # if interactive_mode:
-    #     print(f"ℹ Debug: Matched users: {mapping_df[['user_id', user_key]].to_dict('records')}")
-    #     print(f"ℹ Debug: user_id type in mapping_df: {mapping_df['user_id'].dtype}")
 
     # Check for unmapped users
     unmapped = mapping_df[mapping_df["user_id"].isna()]
@@ -171,7 +181,9 @@ def _match_users_to_mapping(
         mapping_df = mapping_df[mapping_df["user_id"].notna()]
 
     if mapping_df.empty and interactive_mode:
-        print(f"⚠️ No users could be mapped to user_ids")
+        print(f"⚠️ No users could be mapped to user_ids - Function: _match_user_ids")
+        if not failed_df.empty:
+            print(f"⚠️ Failed mappings:\n{failed_df.to_string(index=False)}")
 
     return mapping_df, failed_df
 
@@ -214,22 +226,3 @@ def _process_users(
                 print(f"⚠️ Failed to process user {user_key}: {str(e)}")
 
     return failed_operations, user_ids
-
-
-
-def _prepare_user_payload(
-    user_data: Dict,
-    updates: Dict
-) -> Dict:
-    """Prepare the user payload by applying updates to the user object.
-
-    Args:
-        user_data (Dict): Complete user object from /api/v2/person/get.
-        updates (Dict): Dictionary of field updates (e.g., {'avatarId': '123', 'active': False}).
-
-    Returns:
-        Dict: Updated user object with new field values.
-    """
-    user_data = user_data.copy() 
-    user_data.update(updates)
-    return user_data

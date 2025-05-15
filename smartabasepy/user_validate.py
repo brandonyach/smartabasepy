@@ -1,6 +1,6 @@
 from pandas import DataFrame
 import pandas as pd
-from .utils import AMSError, _raise_ams_error
+from .utils import AMSError
 
 
 def _validate_user_key(user_key: str) -> None:
@@ -14,7 +14,7 @@ def _validate_user_key(user_key: str) -> None:
     """
     valid_user_keys = ["username", "email", "about", "uuid"]
     if user_key not in valid_user_keys:
-        _raise_ams_error(f"Invalid user_key: '{user_key}'. Must be one of {valid_user_keys}", function="validate_user_key")
+        AMSError(f"Invalid user_key: '{user_key}'. Must be one of {valid_user_keys}", function="validate_user_key")
     
     
     

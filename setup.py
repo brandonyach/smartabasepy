@@ -16,6 +16,7 @@ setup(
         "hashlib",
         "mimetype"
         ],
+    extras_require={"test": ["pytest>=7.0", "pytest-cov>=4.0", "responses>=0.23"]},
     author="Brandon Yach", 
     author_email="yachb35@gmail.com",
     description="A Python library for interacting with the Teamworks AMS API",

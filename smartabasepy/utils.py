@@ -6,15 +6,63 @@ from typing import Optional, Dict, Tuple
 
 
 class AMSError(Exception):
-    """Base exception for AMS operations, including login, export, and import errors.
+    """Base exception for AMS operations and errors.
 
-    This exception is raised for all errors encountered during interactions with the AMS API,
-    such as authentication failures, invalid API responses, or data validation issues.
+    Raised for errors during interactions with the AMS API, such as authentication failures,
+    invalid API responses, or data validation issues. Provides detailed error information,
+    including the function, endpoint, and HTTP status code where the error occurred, to
+    assist in debugging and error handling.
+
+    Args:
+        message (str): The primary error message describing the issue.
+        function (Optional[str]): The name of the function where the error occurred.
+            Defaults to None.
+        endpoint (Optional[str]): The API endpoint involved in the error, if applicable.
+            Defaults to None.
+        status_code (Optional[int]): The HTTP status code of the error, if applicable.
+            Defaults to None.
 
     Attributes:
-        message (str): The error message describing the issue.
+        message (str): The primary error message.
+        function (Optional[str]): The function where the error occurred.
+        endpoint (Optional[str]): The API endpoint involved.
+        status_code (Optional[int]): The HTTP status code.
+
+    Examples:
+        >>> try:
+        ...     raise AMSError(
+        ...         message="Invalid credentials",
+        ...         function="login",
+        ...         endpoint="user/loginUser",
+        ...         status_code=401
+        ...     )
+        ... except AMSError as e:
+        ...     print(str(e))
+        Invalid credentials - Function: login - Endpoint: user/loginUser - Status Code: 401. Please check inputs or contact your site administrator.
     """
-    pass
+    def __init__(
+        self,
+        message: str,
+        function: Optional[str] = None,
+        endpoint: Optional[str] = None,
+        status_code: Optional[int] = None
+    ):
+        self.message = message
+        self.function = function
+        self.endpoint = endpoint
+        self.status_code = status_code
+        # Format the full message consistently
+        error_parts = [message]
+        if function:
+            error_parts.append(f"Function: {function}")
+        if endpoint:
+            error_parts.append(f"Endpoint: {endpoint}")
+        if status_code is not None:
+            error_parts.append(f"Status Code: {status_code}")
+        full_message = " - ".join(error_parts) + ". Please check inputs or contact your site administrator."
+        super().__init__(full_message)
+
+
 
 class AMSClient:
     """A client for interacting with the AMS API.
@@ -92,7 +140,6 @@ class AMSClient:
         if not self.session_header:
             raise AMSError("No session header received from server.")
         
-        # Parse the response and check for login exceptions
         self.login_data = response.json()
         if self.login_data.get('__is_rpc_exception__', False):
             error_message = self.login_data.get('value', {}).get('detailMessage', 'Unknown login error')
@@ -156,8 +203,12 @@ class AMSClient:
             kwargs["json"] = payload
         response = self.session.request(method, url, **kwargs)
         if response.status_code != 200:
-            raise AMSError(f"Failed to fetch data from {endpoint} (status {response.status_code}): {response.text}")
-        # Handle empty responses (e.g., null for deleteAll endpoint)
+            raise AMSError(
+                f"Failed to fetch data from {endpoint} (status {response.status_code}): {response.text}",
+                function="_fetch",
+                endpoint=endpoint,
+                status_code=response.status_code
+            )
         try:
             data = response.json()
         except ValueError:
@@ -165,7 +216,7 @@ class AMSClient:
         if cache:
             self._cache[cache_key] = data
         else:
-            self._cache.clear()  # Clear cache if cache=False
+            self._cache.clear() 
         return data
     
     
@@ -207,10 +258,10 @@ class AMSClient:
         env_password = os.getenv("AMS_PASSWORD")
         if env_username and env_password:
             return env_username, env_password
-        _raise_ams_error(
-            "No credentials provided. Set via args or environment variables (AMS_USERNAME and AMS_PASSWORD).",
-            function="validate_credentials"
+        raise AMSError(
+            "No credentials provided. Set via args or environment variables (AMS_USERNAME and AMS_PASSWORD)."
         )
+
 
 persistent_client: Optional['AMSClient'] = None
 
@@ -222,23 +273,45 @@ def get_client(
         cache: bool = True, 
         interactive_mode: bool = False
     ) -> AMSClient:
-    """Get or create an AMSClient, managing persistence based on caching.
+    """Create or retrieve an authenticated AMSClient instance.
 
-    Creates a new AMSClient instance or reuses an existing one if caching is enabled and the client
-    is already authenticated. Prints a success message if interactive_mode is enabled.
+    Creates a new AMSClient instance with the provided credentials or reuses an existing
+    authenticated client if caching is enabled. The client is used for all AMS API
+    interactions, handling authentication and session management. Provides interactive
+    feedback on login success if enabled. This function is typically called internally by
+    other public-facing functions but can be used directly to initialize a client.
 
     Args:
         url (str): The AMS instance URL (e.g., 'https://example.smartabase.com/site').
-        username (Optional[str]): The username for authentication. If None, uses AMS_USERNAME env var.
-        password (Optional[str]): The password for authentication. If None, uses AMS_PASSWORD env var.
-        cache (bool): Whether to cache the client instance (default: True).
-        interactive_mode (bool): Whether to print status messages (default: False).
+            Must include a valid site name.
+        username (Optional[str]): The username for authentication. If None, uses the
+            AMS_USERNAME environment variable. Defaults to None.
+        password (Optional[str]): The password for authentication. If None, uses the
+            AMS_PASSWORD environment variable. Defaults to None.
+        cache (bool): Whether to reuse an existing authenticated client instance if
+            available, improving performance for repeated operations. Defaults to True.
+        interactive_mode (bool): Whether to print status messages during client creation,
+            such as login success. Defaults to False.
 
     Returns:
-        AMSClient: An authenticated AMSClient instance.
+        AMSClient: An authenticated AMSClient instance, ready for API interactions.
 
     Raises:
-        AMSError: If no valid credentials are provided and no cached client is available.
+        AMSError: If the URL is invalid, credentials are missing or invalid, or
+            authentication fails.
+
+    Examples:
+        >>> from smartabasepy import get_client
+        >>> client = get_client(
+        ...     url="https://example.smartabase.com/site",
+        ...     username = "user",
+        ...     password = "pass",
+        ...     cache = True,
+        ...     interactive_mode = True
+        ... )
+        ✔ Successfully logged user into https://example.smartabase.com/site.
+        >>> print(client.authenticated)
+        True
     """
     global persistent_client
     if cache and persistent_client and persistent_client.authenticated:
@@ -252,37 +325,8 @@ def get_client(
         print(f"✔ Successfully logged {username} into {url}.")
     
     if cache:
-        persistent_client = client  # Persist only if cache=True
+        persistent_client = client  
     else:
-        persistent_client = None  # Clear if cache=False
+        persistent_client = None 
     
     return client
-
-
-def _raise_ams_error(
-    message: str,
-    function: str,
-    endpoint: Optional[str] = None,
-    status_code: Optional[int] = None
-) -> None:
-    """Raise an AMSError with a formatted message for any operation.
-
-    Constructs a detailed error message including the provided message, function name,
-    and optional endpoint and status code, then raises an AMSError.
-
-    Args:
-        message (str): The primary error message.
-        function (str): The name of the function where the error occurred.
-        endpoint (Optional[str]): The API endpoint involved in the error.
-        status_code (Optional[int]): The HTTP status code of the error.
-
-    Raises:
-        AMSError: With the formatted error message.
-    """
-    error_parts = [message, f"Function: {function}"]
-    if endpoint:
-        error_parts.append(f"Endpoint: {endpoint}")
-    if status_code:
-        error_parts.append(f"Status Code: {status_code}")
-    full_message = " - ".join(error_parts) + ". Please check inputs or contact your site administrator."
-    raise AMSError(full_message)

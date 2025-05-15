@@ -2,7 +2,7 @@ from typing import Dict, List, Optional
 from pandas import DataFrame
 import pandas as pd
 from .utils import AMSClient, AMSError
-from .user_ import get_user
+from .user_main import get_user
 from .user_option import UserOption
 
 

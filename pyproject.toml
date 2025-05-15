@@ -4,14 +4,18 @@ version = "0.1"
 license = "MIT"
 license-files = ["LICENSE"]
 dependencies = [
-     "requests", 
+    "requests", 
     "requests-toolbelt",
     "pandas", 
     "keyring",
     "os",
+    "python-dotenv",
     "tqdm",
     "typing",
     "datetime",
     "hashlib",
     "mimetype"
 ]
+
+[project.optional-dependencies]
+test = ["pytest>=7.0", "pytest-cov>=4.0", "responses>=0.23"]

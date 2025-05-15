@@ -1,20 +1,18 @@
 import os
-from pathlib import Path
 import pandas as pd
 from typing import Optional, Dict, List
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 import mimetypes
 from pandas import DataFrame
 from datetime import datetime
-from .utils import AMSClient, AMSError, get_client, _raise_ams_error
-from .import_ import update_event_data
+from .utils import AMSClient, AMSError, get_client
+from .import_main import update_event_data
 from .import_option import UpdateEventOption
-from .export_fetch import _fetch_user_ids
 from .file_option import FileUploadOption
-from .file_validate import _validate_file_df
-from .file_process import _merge_upload_results, _format_file_reference
-from .user_process import _match_users_to_mapping, _prepare_user_payload
-from .user_fetch import _get_all_user_data, _update_user
+from .file_validate import _validate_file_df, _validate_output_directory, _validate_file_path
+from .file_process import _merge_upload_results, _format_file_reference, _map_user_ids_to_file_df
+from .user_process import _match_user_ids, _map_user_updates
+from .user_fetch import _fetch_user_ids, _fetch_all_user_data, _update_single_user
 from .user_validate import _validate_user_key
 from .user_option import UserOption
 
@@ -39,18 +37,7 @@ def _download_attachment(
     Raises:
         AMSError: If the directory is not writable or the download fails.
     """
-    # Default to CWD if output_dir is None
-    if output_dir is None:
-        output_dir = os.getcwd()
-    
-    # Ensure output_dir is writable
-    try:
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir, exist_ok=True)
-        elif not os.access(output_dir, os.W_OK):
-            raise AMSError(f"Attachment directory '{output_dir}' is not writable. Please specify a writable directory via 'attachment_directory' in EventOption.")
-    except OSError as e:
-        raise AMSError(f"Failed to create or access attachment directory '{output_dir}': {str(e)}. Ensure the path is valid and writable.")
+    output_dir = _validate_output_directory(output_dir, function="_download_attachment")
 
     full_path = os.path.join(output_dir, file_name)
     response = client.session.get(attachment_url)
@@ -72,60 +59,78 @@ def upload_files(
     option: Optional[FileUploadOption] = None,
     client: Optional[AMSClient] = None
 ) -> List[Dict[str, Optional[str]]]:
-    """Upload one or more files to the AMS server and retrieve their file IDs.
+    """Upload one or more files to an AMS instance and retrieve their file IDs.
 
-    Uploads a file or all files in a directory to the /x/fileupload endpoint and retrieves
-    the file IDs using the /api/v2/fileupload/getUploadStatus endpoint. Uses the session
-    headers for authentication.
+    Uploads a single file or all files in a specified directory to the AMS API's `/x/fileupload`
+    endpoint and retrieves the file IDs using the `/api/v2/fileupload/getUploadStatus` endpoint.
+    Requires valid authentication credentials. Supports interactive feedback, caching, and saving
+    results to a CSV file. Stores results in the client’s `last_uploaded_files` attribute for
+    subsequent operations.
 
     Args:
         file_path (str): The path to a single file or a directory containing files to upload.
-        url (str): The URL of the AMS instance (e.g., 'https://example.smartabase.com/site').
-        username (Optional[str]): The username for authentication. If None, uses AMS_USERNAME env var.
-        password (Optional[str]): The password for authentication. If None, uses AMS_PASSWORD env var.
-        processor_key (str): The processor key to use for the upload (default: "document-key").
-        option (Optional[FileUploadOption]): Configuration options for the upload operation. If None, defaults are used.
-        client (Optional[AMSClient]): A pre-initialized AMSClient instance. If None, a new client is created.
+            Must exist and be accessible.
+        url (str): The AMS instance URL (e.g., 'https://example.smartabase.com/site').
+        username (Optional[str]): The username for authentication. If None, uses the
+            AMS_USERNAME environment variable. Defaults to None.
+        password (Optional[str]): The password for authentication. If None, uses the
+            AMS_PASSWORD environment variable. Defaults to None.
+        processor_key (str): The processor key for the file upload, determining how the AMS
+            server handles the file (e.g., 'document-key' for general documents). Defaults to
+            'document-key'.
+        option (Optional[FileUploadOption]): Configuration options for the upload, including
+            interactive_mode (for status messages), cache (for API response caching), and
+            save_to_file (to save results to a CSV file). If None, uses default
+            FileUploadOption. Defaults to None.
+        client (Optional[AMSClient]): A pre-authenticated AMSClient instance. If None,
+            a new client is created using the provided url, username, and password.
+            Defaults to None.
 
     Returns:
-        List[Dict[str, Optional[str]]]: A list of dictionaries, each containing the file name, its file ID,
-            and the server-assigned file name (if available).
-
-    Side Effects:
-        - If client is provided, stores the results in client.last_uploaded_files.
-        - If option.save_to_file is provided, saves the results to the specified file path as a CSV.
+        List[Dict[str, Optional[str]]]: A list of dictionaries, each containing:
+            - 'file_name': The name of the uploaded file.
+            - 'file_id': The server-assigned file ID (None if upload failed).
+            - 'server_file_name': The server-assigned file name (None if upload failed).
 
     Raises:
-        AMSError: If the file or directory does not exist, or if the upload fails.
+        AMSError: If the file or directory does not exist, is not accessible, authentication
+            fails, the upload fails, or the API response is invalid (e.g., missing file ID).
+
+    Side Effects:
+        - Stores results in `client.last_uploaded_files` if a client is provided.
+        - Saves results to a CSV file if `option.save_to_file` is specified.
+
+    Examples:
+        >>> from smartabasepy import upload_files
+        >>> from smartabasepy import FileUploadOption
+        >>> results = upload_files(
+        ...     file_path = "/path/to/files/document.pdf",
+        ...     url = "https://example.smartabase.com/site",
+        ...     username = "user",
+        ...     password = "pass",
+        ...     processor_key = "document-key",
+        ...     option = FileUploadOption(interactive_mode=True, save_to_file = "upload_results.csv")
+        ... )
+        ℹ Uploading 1 files: 'document.pdf'
+        ✔ Successfully Uploaded 1 files with file ID's 987654
+        Upload results:
+           file_name   file_id server_file_name
+        0 document.pdf 987654   document_2025.pdf
+        ℹ Saved upload results to 'upload_results.csv'
     """
-    # Set default options if none provided
+    
     option = option or FileUploadOption()
     
-    # Create a client if none is provided
     client = client or get_client(url, username, password, interactive_mode=option.interactive_mode)
 
-    # Resolve the file path
-    path = Path(file_path).resolve()
-    if not path.exists():
-        _raise_ams_error(f"Path '{path}' does not exist", function="upload_files")
+    files_to_upload = _validate_file_path(file_path, function="upload_files")
 
-    # Determine if it's a single file or directory
-    if path.is_file():
-        files_to_upload = [(path, path.name)]
-    else:
-        files_to_upload = [(f, f.name) for f in path.iterdir() if f.is_file()]
-    
-    if not files_to_upload:
-        _raise_ams_error(f"No files found at '{path}'", function="upload_files")
-
-    # Ensure the client is authenticated
     if not client.authenticated:
         client.login()
 
-    # Check if skypeName is available in login_data
     skype_name = client.login_data.get("user", {}).get("skypeName")
     if not skype_name:
-        _raise_ams_error("skypeName not found in login response. Cannot set session-token for file upload", function="upload_files")
+        AMSError("skypeName not found in login response. Cannot set session-token for file upload", function="upload_files")
 
     if option.interactive_mode:
         file_names = [file_name for _, file_name in files_to_upload]
@@ -137,7 +142,7 @@ def upload_files(
     results = []
     for file_path, file_name in files_to_upload:
         try:
-            # Use the base URL without the site name (e.g., remove '/ankle')
+            # Use the base URL without the site name 
             base_url = client.url.rsplit('/', 1)[0]
             file_upload_url = f"{base_url}/x/fileupload"
             
@@ -159,7 +164,7 @@ def upload_files(
                 response = client.session.post(file_upload_url, data=multipart_data, headers=headers)
             
             if response.status_code != 200:
-                _raise_ams_error(
+                AMSError(
                     f"Failed to upload file '{file_name}'",
                     function="upload_files",
                     status_code=response.status_code,
@@ -171,7 +176,7 @@ def upload_files(
             status_response = client.session.post(status_url, json={}, headers=client.headers)
             
             if status_response.status_code != 200:
-                _raise_ams_error(
+                AMSError(
                     f"Failed to retrieve upload status for '{file_name}'",
                     function="upload_files",
                     status_code=status_response.status_code,
@@ -181,21 +186,21 @@ def upload_files(
             try:
                 status_data = status_response.json()
             except ValueError:
-                _raise_ams_error(
+                AMSError(
                     f"Invalid response format when retrieving upload status for '{file_name}'",
                     function="upload_files"
                 )
             
             if status_data.get("uploadStatus", {}).get("error", True) or not status_data.get("data"):
                 error_message = status_data.get("uploadStatus", {}).get("message", "Unknown error")
-                _raise_ams_error(
+                AMSError(
                     f"Upload failed for '{file_name}': {error_message}",
                     function="upload_files"
                 )
             
             file_id = status_data["data"][0]["value"].get("id")
             if file_id is None:
-                _raise_ams_error(
+                AMSError(
                     f"Failed to retrieve file ID for '{file_name}'",
                     function="upload_files"
                 )
@@ -254,31 +259,83 @@ def attach_files_to_events(
 ) -> DataFrame:
     """Attach uploaded files to existing events in an AMS Event Form.
 
-    Retrieves the full event data for the specified events, merges the file IDs into the event DataFrame,
-    and updates the events with the new file upload field values. The event form must have a field named
-    "Attachment ID" that matches the 'attachment_id' column in file_df.
+    Links uploaded files to events by updating the specified file upload field in the event
+    form with file IDs from the upload results. The function retrieves event data for the
+    specified form, matches events to files using an 'Attachment ID' field, merges file IDs
+    into the event DataFrame, and updates the events via the AMS API. Returns a DataFrame
+    of failed attachments with reasons for failure. Supports interactive feedback and
+    confirmation prompts.
 
     Args:
-        file_df (DataFrame): A DataFrame containing:
-            - A column with user identifiers (e.g., 'username', 'email', 'about', 'uuid').
-            - A 'file_name' column with the names of the uploaded files (must match names in upload_results).
-            - An 'attachment_id' column matching the "Attachment ID" field in the event form.
-        upload_results (List[Dict]): The results from upload_files, containing 'file_name', 'file_id',
-            and 'server_file_name' for each uploaded file.
-        user_key (str): The name of the user identifier column in file_df ('username', 'email', 'about', or 'uuid').
-        form (str): The name of the AMS Event Form containing the events.
-        file_field_name (str): The name of the file upload field in the event form (e.g., 'attachment').
-        url (str): The URL of the AMS instance (e.g., 'https://example.smartabase.com/site').
-        username (Optional[str]): The username for authentication. If None, uses AMS_USERNAME env var.
-        password (Optional[str]): The password for authentication. If None, uses AMS_PASSWORD env var.
-        option (Optional[UpdateEventOption]): An UpdateEventOption object for customization.
-        client (Optional[AMSClient]): A pre-initialized AMSClient instance. If None, a new client is created.
+        file_df (DataFrame): A pandas DataFrame containing:
+            - A column with user identifiers (named by `user_key`, e.g., 'username', 'email').
+            - A 'file_name' column with names matching those in `upload_results`.
+            - An 'attachment_id' column corresponding to the 'Attachment ID' field in the
+              event form.
+        upload_results (List[Dict]): The results from `upload_files`, containing 'file_name',
+            'file_id', and 'server_file_name' for each uploaded file.
+        user_key (str): The name of the user identifier column in `file_df`, one of
+            'username', 'email', 'about', or 'uuid'.
+        form (str): The name of the AMS Event Form containing the events. Must be a non-empty
+            string and correspond to a valid event form.
+        file_field_name (str): The name of the file upload field in the event form (e.g.,
+            'attachment') to receive the file IDs.
+        url (str): The AMS instance URL (e.g., 'https://example.smartabase.com/site').
+        username (Optional[str]): The username for authentication. If None, uses the
+            AMS_USERNAME environment variable. Defaults to None.
+        password (Optional[str]): The password for authentication. If None, uses the
+            AMS_PASSWORD environment variable. Defaults to None.
+        option (Optional[UpdateEventOption]): Configuration options for the update,
+            including interactive_mode (for status messages and confirmation),
+            cache (for API response caching), and id_col (for user ID mapping).
+            If None, uses default UpdateEventOption. Defaults to None.
+        client (Optional[AMSClient]): A pre-authenticated AMSClient instance. If None,
+            a new client is created using the provided url, username, and password.
+            Defaults to None.
 
     Returns:
-        DataFrame: A DataFrame containing failed attachments with columns ['file_name', 'attachment_id', 'reason'].
+        DataFrame: A pandas DataFrame containing failed attachments with columns:
+            - 'file_name': The name of the file that failed to attach.
+            - 'attachment_id': The attachment ID that failed to match an event.
+            - 'reason': The reason for the failure (e.g., 'File not found in upload_results',
+              'No matching event found'). Returns an empty DataFrame if all attachments succeed.
 
     Raises:
-        AMSError: If the file_df is invalid, events cannot be retrieved, or the update operation fails.
+        AMSError: If `file_df` is invalid (e.g., missing required columns), `user_key` is
+            invalid, no events are found, authentication fails, or the API request fails.
+        ValueError: If `file_df` is empty or contains invalid data.
+
+    Examples:
+        >>> import pandas as pd
+        >>> from smartabasepy import upload_files, attach_files_to_events
+        >>> from smartabasepy import FileUploadOption
+        >>> from smartabasepy import UpdateEventOption
+        >>> file_df = pd.DataFrame({
+        ...     "username": ["john.doe", "jane.smith"],
+        ...     "file_name": ["doc1.pdf", "doc2.pdf"],
+        ...     "attachment_id": ["ATT123", "ATT124"]
+        ... })
+        >>> upload_results = upload_files(
+        ...     file_path = "/path/to/files",
+        ...     url = "https://example.smartabase.com/site",
+        ...     username = "user",
+        ...     password = "pass"
+        ... )
+        >>> failed_df = attach_files_to_events(
+        ...     file_df = file_df,
+        ...     upload_results = upload_results,
+        ...     user_key = "username",
+        ...     form = "Training Log",
+        ...     file_field_name = "attachment",
+        ...     url = "https://example.smartabase.com/site",
+        ...     username = "user",
+        ...     password = "pass",
+        ...     option = UpdateEventOption(interactive_mode = True)
+        ... )
+        ℹ Retrieving user IDs for 2 users using username...
+        ℹ Retrieving events for form 'Training Log' between 01/01/1970 and [current_date] for 2 users...
+        ✔ Successfully updated events with file references
+        ✔ Successfully updated events for 2 files.
     """
     option = option or UpdateEventOption(interactive_mode=True)
     client = client or get_client(url, username, password, cache=option.cache, interactive_mode=option.interactive_mode)
@@ -306,82 +363,27 @@ def attach_files_to_events(
             print(f"⚠️ No files matched the upload_results")
         return failed_df
 
-    # Map user identifiers to user IDs using _fetch_user_ids
-    user_values = file_df[user_key].unique().tolist()
-    if option.interactive_mode:
-        print(f"ℹ Retrieving user IDs for {len(user_values)} users using {user_key}...")
-
-    # Import UserFilter inside the function to avoid circular import
-    from .user_filter import UserFilter
-    from .export_filter import EventFilter
-    from .export_option import EventOption
-    from .export_ import get_event_data
-
-    try:
-        user_ids, user_data = _fetch_user_ids(
-            client=client,
-            filter=UserFilter(user_key=user_key, user_value=user_values),
-            cache=option.cache
-        )
-    except AMSError as e:
-        if option.interactive_mode:
-            print(f"⚠️ Failed to retrieve user data: {str(e)}")
-        return pd.concat([
-            failed_df,
-            DataFrame({
-                "file_name": file_df["file_name"],
-                "attachment_id": file_df["attachment_id"],
-                "reason": f"Failed to retrieve user data: {str(e)}"
-            })
-        ], ignore_index=True)
-
-    if not user_ids:
-        if option.interactive_mode:
-            print(f"⚠️ No users found for the provided {user_key} values")
-        return pd.concat([
-            failed_df,
-            DataFrame({
-                "file_name": file_df["file_name"],
-                "attachment_id": file_df["attachment_id"],
-                "reason": f"No users found for the provided {user_key} values"
-            })
-        ], ignore_index=True)
-
-    if user_data is None:
-        user_data = DataFrame()
-
-    # Map user_ids into file_df
-    user_data = user_data.rename(columns={"userId": "user_id"})
-    file_df = file_df.merge(
-        user_data[["user_id", user_key]],
-        on=user_key,
-        how="left"
+    file_df, user_failed_df = _map_user_ids_to_file_df(
+        file_df, user_key, client, option.interactive_mode, option.cache
     )
-
-    # Check for unmapped users
-    unmapped = file_df[file_df["user_id"].isna()]
-    if not unmapped.empty:
-        failed_df = pd.concat([
-            failed_df,
-            DataFrame({
-                "file_name": unmapped["file_name"],
-                "attachment_id": unmapped["attachment_id"],
-                "reason": f"User not found for {user_key} value"
-            })
-        ], ignore_index=True)
-        file_df = file_df[file_df["user_id"].notna()]
 
     if file_df.empty:
         if option.interactive_mode:
             print(f"⚠️ No users could be mapped to user_ids")
         return failed_df
+    
+    user_values = file_df[user_key].unique().tolist()
 
-    # Retrieve event data
     end_date = datetime.now().strftime("%d/%m/%Y")
-    start_date = "01/01/1970"  # Default to all history
+    start_date = "01/01/1970" 
 
     if option.interactive_mode:
         print(f"ℹ Retrieving events for form '{form}' between {start_date} and {end_date} for {len(user_values)} users...")
+        
+    from .user_filter import UserFilter
+    from .export_filter import EventFilter
+    from .export_option import EventOption
+    from .export_main import get_event_data
 
     try:
         event_df = get_event_data(
@@ -512,27 +514,71 @@ def attach_files_to_avatars(
 ) -> DataFrame:
     """Attach uploaded files as avatars to user profiles in an AMS instance.
 
-    Updates user profiles by setting the avatarId field using the /api/v2/person/save endpoint.
-    Uses complete user objects from /api/v2/person/get to preserve existing fields.
+    Updates user profiles by setting the `avatarId` field with file IDs from the upload results,
+    using the AMS API’s `/api/v2/person/save` endpoint. The function retrieves complete user
+    objects to preserve existing fields, matches users to files via a user identifier, and
+    applies the updates. Returns a DataFrame of failed updates with reasons for failure.
+    Supports interactive feedback and caching.
 
     Args:
-        mapping_df (DataFrame): A DataFrame containing:
-            - A column with a user identifier (one of 'username', 'email', 'about', or 'uuid').
-            - A 'file_name' column with the names of the uploaded files (must match names in upload_results).
-        upload_results (List[Dict]): The results from upload_files, containing 'file_name', 'file_id',
-            and 'server_file_name' for each uploaded file.
-        user_key (str): The user identifier column in mapping_df ('username', 'email', 'about', or 'uuid').
-        url (str): The URL of the AMS instance (e.g., 'https://example.smartabase.com/site').
-        username (Optional[str]): The username for authentication. If None, uses AMS_USERNAME env var.
-        password (Optional[str]): The password for authentication. If None, uses AMS_PASSWORD env var.
-        option (Optional[UserOption]): A UserOption object for customization (e.g., cache, interactive mode).
-        client (Optional[AMSClient]): A pre-initialized AMSClient instance. If None, a new client is created.
+        mapping_df (DataFrame): A pandas DataFrame containing:
+            - A column with user identifiers (named by `user_key`, e.g., 'username', 'email').
+            - A 'file_name' column with names matching those in `upload_results`.
+        upload_results (List[Dict]): The results from `upload_files`, containing 'file_name',
+            'file_id', and 'server_file_name' for each uploaded file.
+        user_key (str): The name of the user identifier column in `mapping_df`, one of
+            'username', 'email', 'about', or 'uuid'.
+        url (str): The AMS instance URL (e.g., 'https://example.smartabase.com/site').
+        username (Optional[str]): The username for authentication. If None, uses the
+            AMS_USERNAME environment variable. Defaults to None.
+        password (Optional[str]): The password for authentication. If None, uses the
+            AMS_PASSWORD environment variable. Defaults to None.
+        option (Optional[UserOption]): Configuration options for the update, including
+            interactive_mode (for status messages), cache (for API response caching), and
+            other user-related settings. If None, uses default UserOption. Defaults to None.
+        client (Optional[AMSClient]): A pre-authenticated AMSClient instance. If None,
+            a new client is created using the provided url, username, and password.
+            Defaults to None.
 
     Returns:
-        DataFrame: A DataFrame containing failed updates with columns ['user_id', 'file_name', 'reason'].
+        DataFrame: A pandas DataFrame containing failed updates with columns:
+            - 'user_id': The user identifier that failed to update.
+            - 'file_name': The name of the file that failed to attach.
+            - 'reason': The reason for the failure (e.g., 'File not found in upload_results',
+              'User not found'). Returns an empty DataFrame if all updates succeed.
 
     Raises:
-        AMSError: If the mapping_df is invalid, users cannot be retrieved, or the update operation fails.
+        AMSError: If `mapping_df` is invalid (e.g., missing required columns), `user_key` is
+            invalid, no users are found, authentication fails, or the API request fails.
+        ValueError: If `mapping_df` is empty or contains invalid data.
+
+    Examples:
+        >>> import pandas as pd
+        >>> from smartabasepy import upload_files, attach_files_to_avatars
+        >>> from smartabasepy import FileUploadOption
+        >>> from smartabasepy import UserOption
+        >>> mapping_df = pd.DataFrame({
+        ...     "username": ["john.doe", "jane.smith"],
+        ...     "file_name": ["avatar1.jpg", "avatar2.jpg"]
+        ... })
+        >>> upload_results = upload_files(
+        ...     file_path = "/path/to/avatars",
+        ...     url = "https://example.smartabase.com/site",
+        ...     username = "user",
+        ...     password = "pass"
+        ... )
+        >>> failed_df = attach_files_to_avatars(
+        ...     mapping_df = mapping_df,
+        ...     upload_results = upload_results,
+        ...     user_key = "username",
+        ...     url = "https://example.smartabase.com/site",
+        ...     username = "user",
+        ...     password = "pass",
+        ...     option = UserOption(interactive_mode = True)
+        ... )
+        ℹ Retrieving user data for 2 users using username...
+        ℹ Updating avatars for 2 users...
+        ✔ Successfully updated avatars for 2 users.
     """
     option = option or UserOption(interactive_mode=True)
     client = client or get_client(url, username, password, cache=option.cache, interactive_mode=option.interactive_mode)
@@ -557,7 +603,7 @@ def attach_files_to_avatars(
 
     if mapping_df.empty:
         if option.interactive_mode:
-            print(f"⚠️ No files matched the upload_results")
+            print(f"⚠️ No files matched the upload_results - Function: attach_files_to_avatars")
         return failed_df
 
     # Fetch all user data
@@ -566,7 +612,7 @@ def attach_files_to_avatars(
         print(f"ℹ Retrieving user data for {len(user_values)} users using {user_key}...")
 
     try:
-        user_df = _get_all_user_data(
+        user_df = _fetch_all_user_data(
             url=url,
             username=username,
             password=password,
@@ -599,7 +645,7 @@ def attach_files_to_avatars(
         ], ignore_index=True)
 
     # Match users to mapping
-    mapping_df, failed_matches = _match_users_to_mapping(
+    mapping_df, failed_matches = _match_user_ids(
         mapping_df,
         user_df,
         user_key,
@@ -634,10 +680,10 @@ def attach_files_to_avatars(
             continue
         
         # Prepare payload
-        user_data = _prepare_user_payload(user_data[0], {"avatarId": file_id})
+        user_data = _map_user_updates({"avatarId": file_id}, user_data[0])
         
         # Update avatar
-        error_msg = _update_user(
+        error_msg = _update_single_user(
             user_data,
             client,
             user_id,
@@ -653,17 +699,7 @@ def attach_files_to_avatars(
 
     # Create DataFrame for failed operations
     failed_df = pd.concat([failed_df, DataFrame(failed_operations)], ignore_index=True)
-
-    # Report results
-    # if failed_df.empty:
-    #     if option.interactive_mode:
-    #         print(f"\n✔ Successfully updated avatars for {len(mapping_df)} users.")
-    # else:
-    #     if option.interactive_mode:
-    #         print(f"\n⚠️ Failed to update avatars for {len(failed_df)} users:")
-    #         print(failed_df.to_string(index=False))
-
-    
+  
     successful_updates = total_updates - len(failed_operations)
     if option.interactive_mode:
         print(f"\n✔ Successfully updated avatars for {successful_updates} users.")

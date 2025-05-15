@@ -1,11 +1,12 @@
 import pandas as pd
 from pandas import DataFrame
-from typing import Optional, Dict, List, Tuple
-from .utils import AMSClient, AMSError, get_client, _raise_ams_error
+from typing import Optional, Dict, List, Tuple, Union
+from .export_filter import EventFilter, ProfileFilter
+from .utils import AMSClient, AMSError, get_client
 from .user_filter import UserFilter
 from .user_option import UserOption
 from .user_build import _build_user_payload, _build_all_user_data_payload
-from .user_process import _flatten_user_response
+from .user_process import _flatten_user_response, _filter_by_about
 
 
 def _fetch_user_data(
@@ -68,17 +69,12 @@ def _fetch_user_save(
     """
     # Ensure id is present (can be "-1" for creation)
     if "id" not in user_data:
-        _raise_ams_error("Missing required field 'id' in user_data", function="fetch_user_save")
+        AMSError("Missing required field 'id' in user_data", function="fetch_user_save")
 
     # Ensure certain fields are strings as expected by the API
     for key in ["id", "avatarId", "organisationId", "ownerId", "plan", "state", "uuid", "emailAddress", "firstName", "lastName", "username", "password", "dateOfBirth", "knownAs", "middleNames", "language", "sidebarWidth", "sex"]:
         if key in user_data and user_data[key] is not None:
             user_data[key] = str(user_data[key])
-
-    # Debug: Print the payload and id type
-    # if interactive_mode:
-    #     print(f"ℹ Debug: Sending payload to /api/v2/person/save: {user_data}")
-    #     print(f"ℹ Debug: Type of user_data['id']: {type(user_data['id'])}")
 
     payload = {"person": user_data}
     response = client._fetch(
@@ -89,22 +85,16 @@ def _fetch_user_save(
         api_version="v2"
     )
 
-    # Debug: Print the full response and id type
-    # if interactive_mode:
-    #     print(f"ℹ Debug: API response from /api/v2/person/save: {response}")
-    #     if "id" in response:
-    #         print(f"ℹ Debug: Type of response['id']: {type(response['id'])}")
-
     # Check for RPC exception in the response
     if response.get("__is_rpc_exception__", False):
         error_type = response.get("type", "UnknownError")
         error_message = response.get("value", {}).get("detailMessage", "No error message provided")
         cause = response.get("value", {}).get("cause", "Unknown cause")
-        _raise_ams_error(f"API error ({error_type}): {error_message}. Cause: {cause}", function="fetch_user_save")
+        AMSError(f"API error ({error_type}): {error_message}. Cause: {cause}", function="fetch_user_save")
 
     # Validate the response
     if not response:
-        _raise_ams_error("No response from server", function="fetch_user_save")
+        AMSError("No response from server", function="fetch_user_save")
 
     # Extract user_id from response
     user_id = None
@@ -115,7 +105,76 @@ def _fetch_user_save(
 
 
 
-def _get_all_user_data(
+def _fetch_user_ids(
+    client: AMSClient,
+    filter: Optional[Union[UserFilter, EventFilter, ProfileFilter]] = None,
+    cache: bool = True
+) -> Tuple[List[int], Optional[DataFrame]]:
+    """Fetch user IDs and the raw user DataFrame for event or profile data export.
+
+    Retrieves user IDs based on the provided filter, along with the raw user DataFrame for further processing.
+
+    Args:
+        client (AMSClient): The authenticated AMSClient instance.
+        filter (Optional[Union[UserFilter, EventFilter, ProfileFilter]]): A filter object to narrow user selection.
+        cache (bool): Whether to cache the API response (default: True).
+
+    Returns:
+        Tuple[List[int], Optional[DataFrame]]: A tuple containing the list of user IDs and the raw user DataFrame.
+
+    Raises:
+        AMSError: If no users are found.
+    """
+    data = _fetch_user_data(client, filter, cache)
+    user_data = _flatten_user_response(data)
+    if not user_data:
+        return [], None
+    
+    user_df = pd.DataFrame(user_data)
+    if user_df.empty:
+        return [], None
+    
+    if filter and filter.user_key == "about" and filter.user_value:
+        user_df = _filter_by_about(user_df, filter.user_value)
+        if user_df.empty:
+            return [], None
+    
+    user_ids = user_df["userId"].dropna().astype(int).tolist()
+    return user_ids, user_df
+
+
+
+def _fetch_all_user_ids(
+    client: AMSClient,
+    cache: bool = True
+) -> List[str]:
+    """Fetch all user IDs from the AMS instance using the /api/v1/usersearch endpoint.
+
+    Args:
+        client (AMSClient): The authenticated AMSClient instance.
+        cache (bool): Whether to cache the API response (default: True).
+
+    Returns:
+        List[str]: A list of user IDs as strings.
+
+    Raises:
+        AMSError: If the API request fails or no users are found.
+    """
+    # Use an empty filter to fetch all users
+    data = _fetch_user_data(client, filter=None, cache=cache)
+    
+    # Extract user IDs
+    users = _flatten_user_response(data)
+    user_ids = [str(user["userId"]) for user in users if "userId" in user]
+    
+    if not user_ids:
+        AMSError("No user IDs returned from server", function="_get_all_user_ids", endpoint="usersearch")
+    
+    return user_ids
+
+
+
+def _fetch_all_user_data(
     url: str,
     username: Optional[str] = None,
     password: Optional[str] = None,
@@ -149,7 +208,7 @@ def _get_all_user_data(
         print("ℹ Fetching all user data...")
     
     if user_ids is None:
-        user_ids = _get_all_user_ids(client, cache=option.cache)
+        user_ids = _fetch_all_user_ids(client, cache=option.cache)
     
     payload = _build_all_user_data_payload(user_ids)
     
@@ -177,37 +236,7 @@ def _get_all_user_data(
 
 
 
-def _get_all_user_ids(
-    client: AMSClient,
-    cache: bool = True
-) -> List[str]:
-    """Fetch all user IDs from the AMS instance using the /api/v1/usersearch endpoint.
-
-    Args:
-        client (AMSClient): The authenticated AMSClient instance.
-        cache (bool): Whether to cache the API response (default: True).
-
-    Returns:
-        List[str]: A list of user IDs as strings.
-
-    Raises:
-        AMSError: If the API request fails or no users are found.
-    """
-    # Use an empty filter to fetch all users
-    data = _fetch_user_data(client, filter=None, cache=cache)
-    
-    # Extract user IDs
-    users = _flatten_user_response(data)
-    user_ids = [str(user["userId"]) for user in users if "userId" in user]
-    
-    if not user_ids:
-        _raise_ams_error("No user IDs returned from server", function="_get_all_user_ids", endpoint="usersearch")
-    
-    return user_ids
-
-
-
-def _update_user(
+def _update_single_user(
     user_data: Dict,
     client: AMSClient,
     user_id: str,

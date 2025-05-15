@@ -30,7 +30,6 @@ def _clean_phone_numbers(phone_numbers: Optional[List[Dict]]) -> str:
 
 
 
-
 def _clean_user_data(
     df: DataFrame,
     columns: Optional[List[str]] = None,
@@ -146,7 +145,6 @@ def _clean_user_data_for_save(df: DataFrame, preserve_columns: Optional[List[str
     df = df.copy()
     preserve_columns = preserve_columns or []
 
-    # Rename columns to API format
     rename_dict = {
         'user_id': 'user_id',  # Preserve user_id
         'first_name': 'firstName',
@@ -184,6 +182,7 @@ def _clean_user_data_for_save(df: DataFrame, preserve_columns: Optional[List[str
             df[col] = df[col].astype(int)  # Ensure user_id remains integer
 
     return df
+
 
 
 def _get_update_columns(df: DataFrame, user_key: str) -> Tuple[Dict[str, str], List[str]]:

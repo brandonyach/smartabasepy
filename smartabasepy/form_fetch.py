@@ -1,6 +1,7 @@
 from typing import Optional, Dict
-from .utils import AMSClient, _raise_ams_error
+from .utils import AMSClient, AMSError
 from .form_option import FormOption
+
 
 def _fetch_form_id_and_type(
     form_name: str,
@@ -34,17 +35,17 @@ def _fetch_form_id_and_type(
         field_details=option.field_details,
         include_instructions=option.include_instructions
     )
-    from .form_ import get_forms
+    from .form_main import get_forms
     forms_df = get_forms(url, username, password, silent_option, client)
     if forms_df.empty:
-        _raise_ams_error(f"No forms found in the AMS instance", function="get_form_summary")
+        AMSError(f"No forms found in the AMS instance", function="get_form_summary")
     
     # Filter for the specified form name
     matching_forms = forms_df[forms_df["form_name"] == form_name]
     if matching_forms.empty:
-        _raise_ams_error(f"Form '{form_name}' not found in the AMS instance", function="get_form_summary")
+        AMSError(f"Form '{form_name}' not found in the AMS instance", function="get_form_summary")
     if len(matching_forms) > 1:
-        _raise_ams_error(f"Multiple forms found with the name '{form_name}'. Form names must be unique.", 
+        AMSError(f"Multiple forms found with the name '{form_name}'. Form names must be unique.", 
                            function="get_form_summary")
     
     form_id = matching_forms.iloc[0]["form_id"]
@@ -77,7 +78,7 @@ def _fetch_form_schema(
     data = client._fetch(endpoint, method="GET", cache=option.cache, api_version="v3")
     
     if not isinstance(data, dict):
-        _raise_ams_error(f"Invalid response from forms/{form_type}/{form_id} endpoint", 
+        AMSError(f"Invalid response from forms/{form_type}/{form_id} endpoint", 
                            function="get_form_summary", endpoint=endpoint)
     
     return data

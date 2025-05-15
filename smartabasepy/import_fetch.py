@@ -4,7 +4,6 @@ from .utils import AMSClient, AMSError
 from .import_process import _handle_import_response, _count_unique_events
 
 
-
 def _fetch_import_payloads(
     client: AMSClient,
     payloads: List[Dict],

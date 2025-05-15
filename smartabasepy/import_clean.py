@@ -3,6 +3,7 @@ from pandas import DataFrame, notna
 import pandas as pd
 from datetime import datetime, timedelta
 
+
 def _clean_import_df(df: DataFrame) -> DataFrame:
     """Clean a DataFrame for import into an AMS Event Form by applying standard transformations.
 

@@ -1,41 +1,7 @@
 from typing import Optional, List
 from pandas import DataFrame, notna, isna
-from .utils import AMSError, _raise_ams_error
+from .utils import AMSError
 from datetime import datetime
-
-
-# def _raise_import_error(
-#         message: str, 
-#         function: str, 
-#         endpoint: str = None, 
-#         status_code: int = None
-#     ) -> None:
-    
-#     """Raise an AMSError with a formatted message for import-related errors.
-
-#     Constructs a detailed error message including the provided message, function name,
-#     and optional endpoint and status code, then raises an AMSError.
-
-#     Args:
-#         message: The primary error message.
-#         function: The name of the function where the error occurred.
-#         endpoint: The API endpoint involved in the error, if applicable. Defaults to None.
-#         status_code: The HTTP status code of the error, if applicable. Defaults to None.
-
-#     Raises:
-#         AMSError: With the formatted error message.
-#     """
-    
-#     error_parts = [message, f"Function: {function}"]
-#     if endpoint:
-#         error_parts.append(f"Endpoint: {endpoint}")
-#     if status_code:
-#         error_parts.append(f"Status Code: {status_code}")
-        
-#     full_message = " - ".join(error_parts) + ". Please check inputs or contact your site administrator."
-    
-#     raise AMSError(full_message)
-
 
 
 def _validate_ids(
@@ -59,14 +25,14 @@ def _validate_ids(
     """
     
     if "user_id" not in df.columns:
-        _raise_ams_error("user_id column is required", function="import_event_data")
+        AMSError("user_id column is required", function="import_event_data")
     if not df["user_id"].apply(lambda x: isinstance(x, (int, float, str)) and notna(x)).all():
-        _raise_ams_error("user_id column must contain valid values", function="import_event_data")
+        AMSError("user_id column must contain valid values", function="import_event_data")
     
     # For updates/upserts, event_id must be present but can be NaN for new records (upserts)
     if overwrite_existing and "event_id" in df.columns:
         if not df["event_id"].apply(lambda x: notna(x) and isinstance(x, (int, float, str)) or isna(x)).all():
-            _raise_ams_error("event_id must contain valid values or NaN when overwrite_existing=True", function="import_event_data")
+            AMSError("event_id must contain valid values or NaN when overwrite_existing=True", function="import_event_data")
 
 
 
@@ -88,7 +54,7 @@ def _validate_dates(df: DataFrame) -> None:
         if col not in df.columns:
             continue
         if not df[col].apply(lambda x: (notna(x) and isinstance(x, str)) or isna(x)).all():
-            _raise_ams_error(f"{col} column must contain valid strings", function="import_event_data")
+            AMSError(f"{col} column must contain valid strings", function="import_event_data")
         non_empty_dates = df[col].dropna()
         
         non_empty_dates = non_empty_dates[non_empty_dates != ""]
@@ -97,7 +63,7 @@ def _validate_dates(df: DataFrame) -> None:
             try:
                 non_empty_dates.apply(lambda x: bool(datetime.strptime(x, "%d/%m/%Y")))
             except ValueError:
-                _raise_ams_error(f"{col} column must be in format DD/MM/YYYY", function="import_event_data")
+                AMSError(f"{col} column must be in format DD/MM/YYYY", function="import_event_data")
 
 
 
@@ -120,7 +86,7 @@ def _validate_times(df: DataFrame) -> None:
         if col not in df.columns:
             continue
         if not df[col].apply(lambda x: (notna(x) and isinstance(x, str)) or isna(x)).all():
-            _raise_ams_error(f"{col} column must contain valid strings", function="import_event_data")
+            AMSError(f"{col} column must contain valid strings", function="import_event_data")
 
 
 
@@ -150,11 +116,11 @@ def _validate_import_df(
     """
     
     if not isinstance(df, DataFrame):
-        _raise_ams_error("DataFrame must be a pandas DataFrame", function="import_event_data")
+        AMSError("DataFrame must be a pandas DataFrame", function="import_event_data")
     if df.empty:
-        _raise_ams_error("DataFrame must not be empty", function="import_event_data")
+        AMSError("DataFrame must not be empty", function="import_event_data")
     if not form or not isinstance(form, str):
-        _raise_ams_error("Form must be a non-empty string", function="import_event_data")
+        AMSError("Form must be a non-empty string", function="import_event_data")
     
     _validate_ids(df, overwrite_existing)
     

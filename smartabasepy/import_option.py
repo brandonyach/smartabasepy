@@ -4,26 +4,39 @@ from typing import Optional, List
 class InsertEventOption:
     """Options for configuring the insert_event_data function.
 
-    This class defines configuration options for inserting events into an AMS Event Form,
-    including whether to display interactive feedback, cache API responses, specify the
-    user identifier column, and define table fields.
+    Defines customization options for inserting new events into an AMS Event Form, controlling
+    aspects such as user identifier mapping, caching API responses, enabling interactive
+    feedback, and specifying table fields. These options allow users to tailor the insertion
+    process, optimizing performance and user experience.
 
     Args:
-        interactive_mode: If True, display progress bars and interactive prompts. Defaults to False.
-        cache: If True, cache API responses and reuse the client session. Defaults to True.
-        id_col: The column name to use for mapping user identifiers to user IDs.
-            Must be one of 'user_id', 'about', 'username', or 'email'. Defaults to 'user_id'.
-        table_fields: List of field names that are table fields in the form. If None, treated as a non-table form.
-            Defaults to None.
+        interactive_mode (bool): Whether to print status messages during execution, such as
+            the number of events being inserted and the result. Defaults to False.
+        cache (bool): Whether to cache API responses to improve performance for repeated
+            requests. Defaults to True.
+        id_col (str): The column name in the DataFrame used to map user identifiers to user
+            IDs. Must be one of 'user_id', 'about', 'username', or 'email'. Defaults to
+            'user_id'.
+        table_fields (Optional[List[str]]): A list of field names that are table fields in
+            the form. If None, the form is treated as non-table. Defaults to None.
 
     Attributes:
-        interactive_mode: Boolean indicating if interactive feedback is enabled.
-        cache: Boolean indicating if caching is enabled.
-        id_col: The column name used for mapping user identifiers.
-        table_fields: List of table field names, or an empty list if None.
+        interactive_mode (bool): Indicates whether interactive mode is enabled.
+        cache (bool): Indicates whether caching is enabled.
+        id_col (str): The column name used for mapping user identifiers.
+        table_fields (List[str]): The list of table field names, or an empty list if None.
 
     Raises:
-        ValueError: If id_col is not one of the allowed values.
+        ValueError: If `id_col` is not one of 'user_id', 'about', 'username', or 'email'.
+
+    Examples:
+        >>> from smartabasepy import InsertEventOption
+        >>> option = InsertEventOption(
+        ...     interactive_mode = True,
+        ...     cache = True,
+        ...     id_col = "username",
+        ...     table_fields = ["TableField"]
+        ... )
     """
     
     def __init__(
@@ -50,17 +63,20 @@ class InsertEventOption:
 class UpdateEventOption:
     """Options for configuring the update_event_data function.
 
-    This class defines configuration options for updating existing events in an AMS Event Form,
-    including whether to display interactive feedback, cache API responses, specify the
-    user identifier column, and define table fields.
+    Defines customization options for updating existing events in an AMS Event Form, controlling
+    aspects such as user identifier mapping, caching API responses, enabling interactive
+    feedback, and specifying table fields. These options allow users to tailor the update
+    process, including confirmation prompts and status messages.
 
     Args:
-        interactive_mode: If True, display progress bars and interactive prompts. Defaults to False.
-        cache: If True, cache API responses and reuse the client session. Defaults to True.
-        id_col: The column name to use for mapping user identifiers to user IDs.
-            Must be one of 'user_id', 'about', 'username', or 'email'. Defaults to 'user_id'.
-        table_fields: List of field names that are table fields in the form. If None, treated as a non-table form.
-            Defaults to None.
+        interactive_mode (bool): Whether to print status messages and prompt for confirmation
+            during execution, such as the number of events being updated. Defaults to False.
+        cache (bool): Whether to cache API responses to improve performance for repeated
+            requests. Defaults to True.
+        id_col (str): The column name in the DataFrame used to map user identifiers to user
+            IDs. Must be one of 'user_id', 'about', 'username', or 'email'. Defaults to
+            'user_id'.
+        table_fields (Optional[List[str]]
 
     Attributes:
         interactive_mode: Boolean indicating if interactive feedback is enabled.
@@ -70,6 +86,15 @@ class UpdateEventOption:
 
     Raises:
         ValueError: If id_col is not one of the allowed values.
+        
+    Examples:
+        >>> from smartabasepy import UpdateEventOption
+        >>> option = UpdateEventOption(
+        ...     interactive_mode = True,
+        ...     cache = True,
+        ...     id_col = "username",
+        ...     table_fields = ["TableField"]
+        ... )
     """
     def __init__(
             self, 
@@ -95,17 +120,21 @@ class UpdateEventOption:
 class UpsertEventOption:
     """Options for configuring the upsert_event_data function.
 
-    This class defines configuration options for upserting events (updating existing and inserting new)
-    in an AMS Event Form, including whether to display interactive feedback, cache API responses,
-    specify the user identifier column, and define table fields.
+    Defines customization options for upserting events (importing new events and updating 
+    existing events) in an AMS Event Form, controlling aspects such as user identifier mapping, 
+    caching API responses, enabling interactive feedback, and specifying table fields. These 
+    options allow users to tailor the upsert process, including confirmation prompts and status 
+    messages.
 
     Args:
-        interactive_mode: If True, display progress bars and interactive prompts. Defaults to False.
-        cache: If True, cache API responses and reuse the client session. Defaults to True.
-        id_col: The column name to use for mapping user identifiers to user IDs.
-            Must be one of 'user_id', 'about', 'username', or 'email'. Defaults to 'user_id'.
-        table_fields: List of field names that are table fields in the form. If None, treated as a non-table form.
-            Defaults to None.
+        interactive_mode (bool): Whether to print status messages and prompt for confirmation
+            during execution, such as the number of events being updated. Defaults to False.
+        cache (bool): Whether to cache API responses to improve performance for repeated
+            requests. Defaults to True.
+        id_col (str): The column name in the DataFrame used to map user identifiers to user
+            IDs. Must be one of 'user_id', 'about', 'username', or 'email'. Defaults to
+            'user_id'.
+        table_fields (Optional[List[str]]
 
     Attributes:
         interactive_mode: Boolean indicating if interactive feedback is enabled.
@@ -115,6 +144,15 @@ class UpsertEventOption:
 
     Raises:
         ValueError: If id_col is not one of the allowed values.
+        
+    Examples:
+        >>> from smartabasepy import UpsertEventOption
+        >>> option = UpsertEventOption(
+        ...     interactive_mode = True,
+        ...     cache = True,
+        ...     id_col = "username",
+        ...     table_fields = ["TableField"]
+        ... )
     """
     def __init__(
             self, 
@@ -141,7 +179,7 @@ class UpsertProfileOption:
 
     This class defines configuration options for upserting profile data in an AMS Profile Form,
     including whether to display interactive feedback, cache API responses, and specify the user
-    identifier column. Profile forms do not support table fields.
+    identifier column.
 
     Args:
         interactive_mode: If True, display progress bars and interactive prompts. Defaults to False.
@@ -156,6 +194,14 @@ class UpsertProfileOption:
 
     Raises:
         ValueError: If id_col is not one of the allowed values.
+        
+    Examples:
+        >>> from smartabasepy import UpsertProfileOption
+        >>> option = UpsertProfileOption(
+        ...     interactive_mode = True,
+        ...     cache = True,
+        ...     id_col = "username"
+        ... )
     """
     def __init__(
             self, 
