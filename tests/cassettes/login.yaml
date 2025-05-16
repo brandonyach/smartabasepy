@@ -1,0 +1,87 @@
+interactions:
+- request:
+    body: '{"username": "python.connector", "password": "Connector123!", "loginProperties":
+      {"appName": "ankle", "clientTime": "2025-05-16T08:28:06"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Basic cHl0aG9uLmNvbm5lY3RvcjpDb25uZWN0b3IxMjMh
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '139'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-test
+      X-APP-ID:
+      - external.example.postman
+    method: POST
+    uri: https://learn.smartabase.com/ankle/api/v2/user/loginUser?informat=json&format=json
+  response:
+    body:
+      string: '{"isAthlete":true,"isCoach":true,"isAdmin":false,"user":{"active":true,"admin":false,"pending":false,"communicationPreferences":"0","sex":"2","avatarId":-1,"id":120855,"organisationId":-1,"ownerId":72788,"plan":-1,"state":0,"emailAddress":"python.connector@ams.com","firstName":"Python","knownAs":"","language":"English","lastName":"Connector","middleNames":"","sidebarWidth":"250px","skypeName":"9099216030003708447","timezone":"","username":"python.connector","uuid":null,"addresses":[],"favoriteDashboards":[],"favoriteEvents":[],"frontPageButtons":[],"phoneNumbers":[],"accountExpiration":"01/01/1970","dateOfBirth":"24/03/2025","__mtime__":1742851291804},"applicationId":1044,"loginActions":[],"restrictionPolicyIds":[],"permissions":["Calendar","Enter
+        Data For Group","Reports","Edit Athlete Accounts","Import Data","Enter Data","Profile
+        Data","Athlete History","Resources - Upload","Import Profile Data","Groups","Enter
+        Appointment","Account Read","Account Write","Resources","Reports - Export","Accounts
+        Audit Export"]}'
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Accept, Accept-Encoding, Access-Control-Allow-Headers, Authorization, Client-Security-Token,
+        Content-Type, Credentials, Origin, X-APP-ID, X-Requested-With
+      Access-Control-Allow-Methods:
+      - GET,HEAD,POST,OPTIONS
+      Access-Control-Max-Age:
+      - '3000'
+      Connection:
+      - Keep-Alive
+      Content-Disposition:
+      - attachment
+      Content-Length:
+      - '1027'
+      Content-Security-Policy:
+      - "default-src\t'self' https://*.smartabase.com https://*.fusionsport.com https://fusionsport.com;
+        font-src\t'self' https://*.smartabase.com https://*.fusionsport.com data:
+        file:; style-src\t'self' 'unsafe-inline' https://*.smartabase.com https://*.fusionsport.com;
+        script-src\t'self' 'unsafe-inline' 'unsafe-eval' https://cdn.segment.com  https://www.googletagmanager.com
+        https://www.google-analytics.com https://ssl.google-analytics.com https://*.smartabase.com
+        https://*.fusionsport.com https://cdn.segment.com https://cmp.osano.com https://*.launchdarkly.com;
+        frame-src\t'self' https://www.youtube.com https://*.shinyapps.io https://*.smartabase.com
+        https://*.fusionsport.com https://fusionsport.com data:; frame-ancestors\t'self'
+        file:; img-src\t\t'self' https://*.smartabase.com https://www.google-analytics.com
+        https://google-analytics.com data: file:; connect-src\t'self' https://*.smartabase.com
+        https://api.segment.io https://cdn.segment.com https://www.google-analytics.com
+        https://google-analytics.com https://*.googleapis.com https://browser-intake-datadoghq.eu
+        https://api.segment.io cdn.segment.com https://*.api.osano.com https://api.integrations.smartabase.com
+        https://*.launchdarkly.com; worker-src\t'self' blob:; upgrade-insecure-requests; "
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Fri, 16 May 2025 14:28:07 GMT
+      Keep-Alive:
+      - timeout=5, max=1000
+      Referrer-Policy:
+      - strict-origin
+      Server:
+      - Apache
+      Set-Cookie:
+      - JSESSIONID=I7cc1WqjRBFDQkt4cDSzwO1l; Path=/; Secure; HttpOnly
+      Strict-Transport-Security:
+      - max-age=63072000
+      Vary:
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - 1; mode=block
+      session-header:
+      - I7cc1WqjRBFDQkt4cDSzwO1l
+    status:
+      code: 200
+      message: OK
+version: 1
