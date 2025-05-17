@@ -4,18 +4,32 @@ version = "0.1"
 license = "MIT"
 license-files = ["LICENSE"]
 dependencies = [
-    "requests", 
+    "requests",
     "requests-toolbelt",
-    "pandas", 
-    "keyring",
-    "os",
+    "pandas",
     "python-dotenv",
     "tqdm",
-    "typing",
-    "datetime",
-    "hashlib",
-    "mimetype"
+    "mimetypes" 
 ]
 
 [project.optional-dependencies]
-test = ["pytest>=7.0", "pytest-cov>=4.0", "responses>=0.23"]
+test = [
+    "pytest>=7.0", 
+    "pytest-cov>=4.0", 
+    "responses>=0.23",
+    "vcrpy>=4.0"
+]
+
+dev = ["keyring>=23.0"]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: mark a test as an integration test requiring real API access"
+    
+]
+python_files = ["test_*.py"]
+addopts = "--cov=smartabasepy --cov-report=html"

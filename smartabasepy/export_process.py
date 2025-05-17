@@ -2,7 +2,7 @@ from datetime import datetime
 from pandas import DataFrame
 from typing import Optional, List, Dict, Any
 from tqdm import tqdm
-from .file_main import _download_attachment
+from .file_process import _download_attachment
 from .utils import AMSError
 
 

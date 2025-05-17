@@ -1,8 +1,10 @@
 import pandas as pd
 from pandas import DataFrame
-from typing import List, Dict, Tuple
+import os
+from typing import List, Dict, Tuple, Optional
 from .user_fetch import _fetch_user_ids
 from .utils import AMSError, AMSClient
+from .file_validate import _validate_output_directory
 
 
 def _merge_upload_results(file_df: DataFrame, upload_results: List[Dict]) -> DataFrame:
@@ -116,3 +118,35 @@ def _map_user_ids_to_file_df(
         ], ignore_index=True)
         file_df = file_df[file_df["user_id"].notna()]
     return file_df, failed_df
+
+
+def _download_attachment(
+        client: AMSClient, 
+        attachment_url: str, 
+        file_name: str, 
+        output_dir: Optional[str] = None
+    ) -> str:
+    """Download an attachment from a URL and save it to a local file.
+
+    Args:
+        client (AMSClient): The authenticated AMSClient instance to use for the download.
+        attachment_url (str): The URL of the attachment to download.
+        file_name (str): The name to give the downloaded file.
+        output_dir (Optional[str]): The directory to save the file in. If None, uses the current working directory.
+
+    Returns:
+        str: The full path to the downloaded file.
+
+    Raises:
+        AMSError: If the directory is not writable or the download fails.
+    """
+    output_dir = _validate_output_directory(output_dir, function="_download_attachment")
+
+    full_path = os.path.join(output_dir, file_name)
+    response = client.session.get(attachment_url)
+    if response.status_code == 200:
+        with open(full_path, "wb") as f:
+            f.write(response.content)
+        return full_path
+    else:
+        raise AMSError(f"Failed to download attachment from {attachment_url}: {response.status_code}")

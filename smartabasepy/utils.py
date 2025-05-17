@@ -106,11 +106,13 @@ class AMSClient:
         self.password = password or os.getenv("AMS_PASSWORD")
         self.authenticated = False
         self.session = requests.Session()
+        self.session_header = None  
         self.login_data = {}
         self.last_uploaded_files = []
-        if self.username and self.password:
-            self.session.auth = (self.username, self.password)
-            self.login()
+        if not self.username or not self.password:
+                 raise AMSError("No valid credentials provided. Supply 'username' and 'password' or set AMS_USERNAME/AMS_PASSWORD env vars.")
+        self.session.auth = (self.username, self.password)
+        self.login()
 
 
     def login(self) -> None:

@@ -1,0 +1,88 @@
+interactions:
+- request:
+    body: '{"person": {"id": "-1", "firstName": "Test", "lastName": "User", "username":
+      "test.user.2025@example.com", "emailAddress": "test.user.2025@example.com",
+      "dateOfBirth": "2000-01-01", "password": "Test123!", "active": true, "knownAs":
+      "", "middleNames": "", "language": "", "sidebarWidth": "", "uuid": "test-uuid-123",
+      "sex": "Male"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Basic cHl0aG9uLmNvbm5lY3RvcjpDb25uZWN0b3IxMjMh
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '332'
+      Content-Type:
+      - application/json
+      Cookie:
+      - JSESSIONID=Hyy2Vt685+7LgpJS+xVwClGF
+      User-Agent:
+      - python-test
+      X-APP-ID:
+      - external.example.postman
+      session-header:
+      - Hyy2Vt685+7LgpJS+xVwClGF
+    method: POST
+    uri: https://learn.smartabase.com/ankle/api/v2/person/save?informat=json&format=json
+  response:
+    body:
+      string: '{"active":true,"admin":false,"pending":false,"communicationPreferences":null,"sex":"0","avatarId":0,"id":121185,"organisationId":0,"ownerId":120855,"plan":0,"state":0,"emailAddress":"test.user.2025@example.com","firstName":"Test","knownAs":"","language":"English","lastName":"User","middleNames":"","sidebarWidth":"","skypeName":null,"timezone":null,"username":"test.user.2025@example.com","uuid":"test-uuid-123","addresses":null,"favoriteDashboards":null,"favoriteEvents":null,"frontPageButtons":null,"phoneNumbers":null,"accountExpiration":"01/01/1970","dateOfBirth":"01/01/2000","__mtime__":1747406918247}'
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Accept, Accept-Encoding, Access-Control-Allow-Headers, Authorization, Client-Security-Token,
+        Content-Type, Credentials, Origin, X-APP-ID, X-Requested-With
+      Access-Control-Allow-Methods:
+      - GET,HEAD,POST,OPTIONS
+      Access-Control-Max-Age:
+      - '3000'
+      Connection:
+      - Keep-Alive
+      Content-Disposition:
+      - attachment
+      Content-Length:
+      - '608'
+      Content-Security-Policy:
+      - "default-src\t'self' https://*.smartabase.com https://*.fusionsport.com https://fusionsport.com;
+        font-src\t'self' https://*.smartabase.com https://*.fusionsport.com data:
+        file:; style-src\t'self' 'unsafe-inline' https://*.smartabase.com https://*.fusionsport.com;
+        script-src\t'self' 'unsafe-inline' 'unsafe-eval' https://cdn.segment.com  https://www.googletagmanager.com
+        https://www.google-analytics.com https://ssl.google-analytics.com https://*.smartabase.com
+        https://*.fusionsport.com https://cdn.segment.com https://cmp.osano.com https://*.launchdarkly.com;
+        frame-src\t'self' https://www.youtube.com https://*.shinyapps.io https://*.smartabase.com
+        https://*.fusionsport.com https://fusionsport.com data:; frame-ancestors\t'self'
+        file:; img-src\t\t'self' https://*.smartabase.com https://www.google-analytics.com
+        https://google-analytics.com data: file:; connect-src\t'self' https://*.smartabase.com
+        https://api.segment.io https://cdn.segment.com https://www.google-analytics.com
+        https://google-analytics.com https://*.googleapis.com https://browser-intake-datadoghq.eu
+        https://api.segment.io cdn.segment.com https://*.api.osano.com https://api.integrations.smartabase.com
+        https://*.launchdarkly.com; worker-src\t'self' blob:; upgrade-insecure-requests; "
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Fri, 16 May 2025 14:48:38 GMT
+      Keep-Alive:
+      - timeout=5, max=1000
+      Referrer-Policy:
+      - strict-origin
+      Server:
+      - Apache
+      Strict-Transport-Security:
+      - max-age=63072000
+      Vary:
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - 1; mode=block
+      session-header:
+      - Hyy2Vt685+7LgpJS+xVwClGF
+    status:
+      code: 200
+      message: OK
+version: 1

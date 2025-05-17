@@ -1,0 +1,81 @@
+interactions:
+- request:
+    body: '{"name": "python.connector"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Basic cHl0aG9uLmNvbm5lY3RvcjpDb25uZWN0b3IxMjMh
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '28'
+      Content-Type:
+      - application/json
+      Cookie:
+      - JSESSIONID=Sj7JdzRT4-YhRubDJLqoeySD
+      User-Agent:
+      - python-test
+      X-APP-ID:
+      - external.example.postman
+      session-header:
+      - Sj7JdzRT4-YhRubDJLqoeySD
+    method: POST
+    uri: https://learn.smartabase.com/ankle/api/v1/listgroups?informat=json&format=json
+  response:
+    body:
+      string: '{"name": ["US HPCS","All Accounts","Test Group","Womens Squad","Mens
+        Squad"]}'
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Accept, Accept-Encoding, Access-Control-Allow-Headers, Authorization, Client-Security-Token,
+        Content-Type, Credentials, Origin, X-APP-ID, X-Requested-With
+      Access-Control-Allow-Methods:
+      - GET,HEAD,POST,OPTIONS
+      Access-Control-Max-Age:
+      - '3000'
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - "default-src\t'self' https://*.smartabase.com https://*.fusionsport.com https://fusionsport.com;
+        font-src\t'self' https://*.smartabase.com https://*.fusionsport.com data:
+        file:; style-src\t'self' 'unsafe-inline' https://*.smartabase.com https://*.fusionsport.com;
+        script-src\t'self' 'unsafe-inline' 'unsafe-eval' https://cdn.segment.com  https://www.googletagmanager.com
+        https://www.google-analytics.com https://ssl.google-analytics.com https://*.smartabase.com
+        https://*.fusionsport.com https://cdn.segment.com https://cmp.osano.com https://*.launchdarkly.com;
+        frame-src\t'self' https://www.youtube.com https://*.shinyapps.io https://*.smartabase.com
+        https://*.fusionsport.com https://fusionsport.com data:; frame-ancestors\t'self'
+        file:; img-src\t\t'self' https://*.smartabase.com https://www.google-analytics.com
+        https://google-analytics.com data: file:; connect-src\t'self' https://*.smartabase.com
+        https://api.segment.io https://cdn.segment.com https://www.google-analytics.com
+        https://google-analytics.com https://*.googleapis.com https://browser-intake-datadoghq.eu
+        https://api.segment.io cdn.segment.com https://*.api.osano.com https://api.integrations.smartabase.com
+        https://*.launchdarkly.com; worker-src\t'self' blob:; upgrade-insecure-requests; "
+      Date:
+      - Fri, 16 May 2025 14:39:39 GMT
+      Keep-Alive:
+      - timeout=5, max=1000
+      Referrer-Policy:
+      - strict-origin
+      Server:
+      - Apache
+      Strict-Transport-Security:
+      - max-age=63072000
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - 1; mode=block
+      session-header:
+      - Sj7JdzRT4-YhRubDJLqoeySD
+    status:
+      code: 200
+      message: OK
+version: 1

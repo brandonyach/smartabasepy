@@ -1,6 +1,7 @@
 from typing import Optional, Dict, Any
 from .utils import AMSClient, AMSError
 from .login_option import LoginOption
+import os
 
 
 def login(
@@ -62,8 +63,22 @@ def login(
         username_display = username or "AMS_USERNAME"
         print(f"ℹ Logging {username_display} into {url}...")
     
+    # Validate credentials
+    if not username or not password:
+        username = os.getenv("AMS_USERNAME")
+        password = os.getenv("AMS_PASSWORD")
+        if not username or not password:
+            if option.interactive_mode:
+                print(f"✖ Failed to log {username_display} into {url}: No valid credentials provided")
+            raise AMSError("No valid credentials provided. Supply 'username' and 'password' or set AMS_USERNAME/AMS_PASSWORD env vars.")
+    
     try:
         client = AMSClient(url, username, password)
+        
+        if not client.authenticated:
+            if option.interactive_mode:
+                print(f"✖ Failed to log {username} into {url}: Authentication failed")
+            raise AMSError("Authentication failed")
         
         login_object = {
             "login_data": client.login_data,

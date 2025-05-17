@@ -9,45 +9,12 @@ from .utils import AMSClient, AMSError, get_client
 from .import_main import update_event_data
 from .import_option import UpdateEventOption
 from .file_option import FileUploadOption
-from .file_validate import _validate_file_df, _validate_output_directory, _validate_file_path
+from .file_validate import _validate_file_df, _validate_file_path
 from .file_process import _merge_upload_results, _format_file_reference, _map_user_ids_to_file_df
 from .user_process import _match_user_ids, _map_user_updates
-from .user_fetch import _fetch_user_ids, _fetch_all_user_data, _update_single_user
+from .user_fetch import _fetch_all_user_data, _update_single_user
 from .user_validate import _validate_user_key
 from .user_option import UserOption
-
-
-def _download_attachment(
-        client: AMSClient, 
-        attachment_url: str, 
-        file_name: str, 
-        output_dir: Optional[str] = None
-    ) -> str:
-    """Download an attachment from a URL and save it to a local file.
-
-    Args:
-        client (AMSClient): The authenticated AMSClient instance to use for the download.
-        attachment_url (str): The URL of the attachment to download.
-        file_name (str): The name to give the downloaded file.
-        output_dir (Optional[str]): The directory to save the file in. If None, uses the current working directory.
-
-    Returns:
-        str: The full path to the downloaded file.
-
-    Raises:
-        AMSError: If the directory is not writable or the download fails.
-    """
-    output_dir = _validate_output_directory(output_dir, function="_download_attachment")
-
-    full_path = os.path.join(output_dir, file_name)
-    response = client.session.get(attachment_url)
-    if response.status_code == 200:
-        with open(full_path, "wb") as f:
-            f.write(response.content)
-        return full_path
-    else:
-        raise AMSError(f"Failed to download attachment from {attachment_url}: {response.status_code}")
-
 
 
 def upload_files(
@@ -55,7 +22,7 @@ def upload_files(
     url: str,
     username: Optional[str] = None,
     password: Optional[str] = None,
-    processor_key: str = "document-key",
+    processor_key: str = "avatar-key",
     option: Optional[FileUploadOption] = None,
     client: Optional[AMSClient] = None
 ) -> List[Dict[str, Optional[str]]]:
@@ -76,8 +43,8 @@ def upload_files(
         password (Optional[str]): The password for authentication. If None, uses the
             AMS_PASSWORD environment variable. Defaults to None.
         processor_key (str): The processor key for the file upload, determining how the AMS
-            server handles the file (e.g., 'document-key' for general documents). Defaults to
-            'document-key'.
+            server handles the file (e.g., 'document-key' for general document or 'avatar-key' for profile avatars). Defaults to
+            'avatar-key'.
         option (Optional[FileUploadOption]): Configuration options for the upload, including
             interactive_mode (for status messages), cache (for API response caching), and
             save_to_file (to save results to a CSV file). If None, uses default
@@ -522,7 +489,8 @@ def attach_files_to_avatars(
 
     Args:
         mapping_df (DataFrame): A pandas DataFrame containing:
-            - A column with user identifiers (named by `user_key`, e.g., 'username', 'email').
+            - A column with user identifiers (named by `user_key`, e.g., 'about', 'username', 
+        'email', or 'uuid').
             - A 'file_name' column with names matching those in `upload_results`.
         upload_results (List[Dict]): The results from `upload_files`, containing 'file_name',
             'file_id', and 'server_file_name' for each uploaded file.

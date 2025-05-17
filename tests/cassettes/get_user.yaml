@@ -1,0 +1,451 @@
+interactions:
+- request:
+    body: '{"username": "python.connector", "password": "Connector123!", "loginProperties":
+      {"appName": "ankle", "clientTime": "2025-05-16T08:48:35"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Basic cHl0aG9uLmNvbm5lY3RvcjpDb25uZWN0b3IxMjMh
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '139'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-test
+      X-APP-ID:
+      - external.example.postman
+    method: POST
+    uri: https://learn.smartabase.com/ankle/api/v2/user/loginUser?informat=json&format=json
+  response:
+    body:
+      string: '{"isAthlete":true,"isCoach":true,"isAdmin":false,"user":{"active":true,"admin":false,"pending":false,"communicationPreferences":"0","sex":"2","avatarId":-1,"id":120855,"organisationId":-1,"ownerId":72788,"plan":-1,"state":0,"emailAddress":"python.connector@ams.com","firstName":"Python","knownAs":"","language":"English","lastName":"Connector","middleNames":"","sidebarWidth":"250px","skypeName":"8670025826523154849","timezone":"","username":"python.connector","uuid":null,"addresses":[],"favoriteDashboards":[],"favoriteEvents":[],"frontPageButtons":[],"phoneNumbers":[],"accountExpiration":"01/01/1970","dateOfBirth":"24/03/2025","__mtime__":1742851291804},"applicationId":1044,"loginActions":[],"restrictionPolicyIds":[],"permissions":["Calendar","Enter
+        Data For Group","Reports","Edit Athlete Accounts","Import Data","Enter Data","Profile
+        Data","Athlete History","Resources - Upload","Import Profile Data","Groups","Enter
+        Appointment","Account Read","Account Write","Resources","Reports - Export","Accounts
+        Audit Export"]}'
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Accept, Accept-Encoding, Access-Control-Allow-Headers, Authorization, Client-Security-Token,
+        Content-Type, Credentials, Origin, X-APP-ID, X-Requested-With
+      Access-Control-Allow-Methods:
+      - GET,HEAD,POST,OPTIONS
+      Access-Control-Max-Age:
+      - '3000'
+      Connection:
+      - Keep-Alive
+      Content-Disposition:
+      - attachment
+      Content-Length:
+      - '1027'
+      Content-Security-Policy:
+      - "default-src\t'self' https://*.smartabase.com https://*.fusionsport.com https://fusionsport.com;
+        font-src\t'self' https://*.smartabase.com https://*.fusionsport.com data:
+        file:; style-src\t'self' 'unsafe-inline' https://*.smartabase.com https://*.fusionsport.com;
+        script-src\t'self' 'unsafe-inline' 'unsafe-eval' https://cdn.segment.com  https://www.googletagmanager.com
+        https://www.google-analytics.com https://ssl.google-analytics.com https://*.smartabase.com
+        https://*.fusionsport.com https://cdn.segment.com https://cmp.osano.com https://*.launchdarkly.com;
+        frame-src\t'self' https://www.youtube.com https://*.shinyapps.io https://*.smartabase.com
+        https://*.fusionsport.com https://fusionsport.com data:; frame-ancestors\t'self'
+        file:; img-src\t\t'self' https://*.smartabase.com https://www.google-analytics.com
+        https://google-analytics.com data: file:; connect-src\t'self' https://*.smartabase.com
+        https://api.segment.io https://cdn.segment.com https://www.google-analytics.com
+        https://google-analytics.com https://*.googleapis.com https://browser-intake-datadoghq.eu
+        https://api.segment.io cdn.segment.com https://*.api.osano.com https://api.integrations.smartabase.com
+        https://*.launchdarkly.com; worker-src\t'self' blob:; upgrade-insecure-requests; "
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Fri, 16 May 2025 14:48:36 GMT
+      Keep-Alive:
+      - timeout=5, max=1000
+      Referrer-Policy:
+      - strict-origin
+      Server:
+      - Apache
+      Set-Cookie:
+      - JSESSIONID=Hyy2Vt685+7LgpJS+xVwClGF; Path=/; Secure; HttpOnly
+      Strict-Transport-Security:
+      - max-age=63072000
+      Vary:
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - 1; mode=block
+      session-header:
+      - Hyy2Vt685+7LgpJS+xVwClGF
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"identification": []}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Basic cHl0aG9uLmNvbm5lY3RvcjpDb25uZWN0b3IxMjMh
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '22'
+      Content-Type:
+      - application/json
+      Cookie:
+      - JSESSIONID=Hyy2Vt685+7LgpJS+xVwClGF
+      User-Agent:
+      - python-test
+      X-APP-ID:
+      - external.example.postman
+      session-header:
+      - Hyy2Vt685+7LgpJS+xVwClGF
+    method: POST
+    uri: https://learn.smartabase.com/ankle/api/v1/usersearch?informat=json&format=json
+  response:
+    body:
+      string: '{"results": [{"search": {},"results": [{"userId": 31152,"firstName":
+        "Site","lastName": "Owner","dob": "27/04/2000","middleName": "","emailAddress":
+        "learn@fusionsport.com","knownAs": "protected","organisationalId": -1,"username":
+        "fusion.support","sex": "MALE","uuid": "31152"},{"userId": 72788,"firstName":
+        "Brandon","lastName": "Yach","dob": "19/09/2019","middleName": "","emailAddress":
+        "byach@teamworks.com","knownAs": "","organisationalId": -1,"username": "brandon.yach","sex":
+        "MALE","uuid": ""},{"userId": 72827,"firstName": "Riley","lastName": "Jones","dob":
+        "01/12/1990","middleName": "","emailAddress": "riley.jones@newdomain.com","knownAs":
+        "","organisationalId": -1,"username": "Riley.Jones","phoneNumbers": [{"type":
+        "MOBILE","countryCode": "1","prefix": "333","number": "4567891"}],"sex": "MALE","uuid":
+        "new123"},{"userId": 72828,"firstName": "Samantha","lastName": "Fields","dob":
+        "02/10/1985","middleName": "","emailAddress": "sam.fields@newdomain.com","knownAs":
+        "","organisationalId": -1,"username": "Samantha.Fields","phoneNumbers": [{"type":
+        "HOME","countryCode": "","prefix": "","number": ""}],"sex": "FEMALE","uuid":
+        "new456"},{"userId": 72829,"firstName": "Mary","lastName": "Phillips","dob":
+        "29/09/2000","middleName": "","emailAddress": "mary.phillips@smartabase.com","knownAs":
+        "","organisationalId": -1,"username": "Mary.Phillips","phoneNumbers": [{"type":
+        "HOME","countryCode": "","prefix": "","number": ""}],"sex": "FEMALE","uuid":
+        ""},{"userId": 72830,"firstName": "Charlie","lastName": "Thompson","dob":
+        "23/03/1993","middleName": "","emailAddress": "charlie.thompson@smartabase.com","knownAs":
+        "","organisationalId": -1,"username": "Charlie.Thompson","phoneNumbers": [{"type":
+        "HOME","countryCode": "","prefix": "","number": ""}],"sex": "MALE","uuid":
+        ""},{"userId": 72831,"firstName": "Emily","lastName": "Collins","dob": "08/07/1990","middleName":
+        "","emailAddress": "emily.collins@smartabase.com","knownAs": "","organisationalId":
+        -1,"username": "Emily.Collins","phoneNumbers": [{"type": "HOME","countryCode":
+        "","prefix": "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 72832,"firstName":
+        "Stephanie","lastName": "Bryant","dob": "28/06/1997","middleName": "","emailAddress":
+        "stephanie.bryant@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Stephanie.Bryant","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 72833,"firstName":
+        "Liam","lastName": "Walker","dob": "06/08/1987","middleName": "","emailAddress":
+        "liam.walker@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Liam.Walker","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 72834,"firstName":
+        "Lucas","lastName": "Martin","dob": "23/05/1996","middleName": "","emailAddress":
+        "lucas.martin@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Lucas.Martin","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 72835,"firstName":
+        "Alex","lastName": "Robinson","dob": "02/05/1992","middleName": "","emailAddress":
+        "alex.robinson@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Alex.Robinson","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 72836,"firstName":
+        "William","lastName": "Brown","dob": "23/04/1996","middleName": "","emailAddress":
+        "william.brown@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "William.Brown","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 72837,"firstName":
+        "Claire","lastName": "Ortega","dob": "04/11/1995","middleName": "","emailAddress":
+        "claire.ortega@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Claire.Ortega","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 72838,"firstName":
+        "Aiden","lastName": "Thomas","dob": "06/06/2002","middleName": "","emailAddress":
+        "aiden.thomas@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Aiden.Thomas","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 72839,"firstName":
+        "Annie","lastName": "Wilkins","dob": "14/12/2000","middleName": "","emailAddress":
+        "annie.wilkins@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Annie.Wilkins","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 72840,"firstName":
+        "Miranda","lastName": "Howard","dob": "22/10/1995","middleName": "","emailAddress":
+        "miranda.howard@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Miranda.Howard","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 72841,"firstName":
+        "Naomi","lastName": "Faulkner","dob": "21/09/1990","middleName": "","emailAddress":
+        "naomi@smartabase.com","knownAs": "","organisationalId": -1,"username": "Naomi.Faulkner","phoneNumbers":
+        [{"type": "HOME","countryCode": "","prefix": "","number": ""}],"sex": "FEMALE","uuid":
+        ""},{"userId": 72842,"firstName": "Jackson","lastName": "King","dob": "24/04/1991","middleName":
+        "","emailAddress": "jackson.king@smartabase.com","knownAs": "","organisationalId":
+        -1,"username": "Jackson.King","phoneNumbers": [{"type": "HOME","countryCode":
+        "","prefix": "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 72843,"firstName":
+        "Jane","lastName": "Tomlinson","dob": "01/03/1986","middleName": "","emailAddress":
+        "jane.tomlinson@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Jane.Tomlinson","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 72844,"firstName":
+        "Oliver","lastName": "Taylor","dob": "23/07/1997","middleName": "","emailAddress":
+        "oliver.taylor@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Oliver.Taylor","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 72845,"firstName":
+        "Juanita","lastName": "Nunez","dob": "09/01/1989","middleName": "","emailAddress":
+        "juanita.nunez@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Juanita.Nunez","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 72846,"firstName":
+        "Noah","lastName": "White","dob": "01/12/2001","middleName": "","emailAddress":
+        "noah.white@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Noah.White","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 72847,"firstName":
+        "Aimee","lastName": "Park","dob": "10/09/1991","middleName": "","emailAddress":
+        "aimee.park@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Aimee.Park","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 72848,"firstName":
+        "Joshua","lastName": "Nguyen","dob": "26/07/1988","middleName": "","emailAddress":
+        "joshua.nguyen@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Joshua.Nguyen","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 72849,"firstName":
+        "Frances","lastName": "Gray","dob": "24/03/1999","middleName": "","emailAddress":
+        "frances.gray@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Frances.Gray","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 72850,"firstName":
+        "Jayden","lastName": "Harris","dob": "26/09/1993","middleName": "","emailAddress":
+        "jayden.harris@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Jayden.Harris","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 72851,"firstName":
+        "Jasmine","lastName": "Long","dob": "09/02/1990","middleName": "","emailAddress":
+        "jasmine.long@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Jasmine.Long","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 72852,"firstName":
+        "Max","lastName": "Kelly","dob": "07/12/1994","middleName": "","emailAddress":
+        "max.kelly@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Max.Kelly","phoneNumbers": [{"type": "HOME","countryCode": "","prefix": "","number":
+        ""}],"sex": "MALE","uuid": ""},{"userId": 72853,"firstName": "Leslie","lastName":
+        "Hicks","dob": "23/08/1986","middleName": "","emailAddress": "leslie.hicks@smartabase.com","knownAs":
+        "","organisationalId": -1,"username": "Leslie.Hicks","phoneNumbers": [{"type":
+        "HOME","countryCode": "","prefix": "","number": ""}],"sex": "FEMALE","uuid":
+        ""},{"userId": 72854,"firstName": "Rosie","lastName": "Finch","dob": "14/03/1989","middleName":
+        "","emailAddress": "rosie.finch@smartabase.com","knownAs": "","organisationalId":
+        -1,"username": "Rosie.Finch","phoneNumbers": [{"type": "HOME","countryCode":
+        "","prefix": "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 72855,"firstName":
+        "Cooper","lastName": "Johnson","dob": "26/11/1990","middleName": "","emailAddress":
+        "cooper.johnson@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Cooper.Johnson","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 72856,"firstName":
+        "Monica","lastName": "Logan","dob": "07/09/1995","middleName": "","emailAddress":
+        "monica.logan@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Monica.Logan","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 72857,"firstName":
+        "Susan","lastName": "Walker","dob": "25/03/1993","middleName": "","emailAddress":
+        "susan.walker@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Susan.Walker","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 72858,"firstName":
+        "Alison","lastName": "Smith","dob": "18/08/1999","middleName": "","emailAddress":
+        "alison.smith@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Alison.Smith","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 72859,"firstName":
+        "Silvia","lastName": "Franklin","dob": "08/02/2001","middleName": "","emailAddress":
+        "silvia.franklin@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Silvia.Franklin","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 72860,"firstName":
+        "Lachlan","lastName": "Smith","dob": "08/12/1994","middleName": "","emailAddress":
+        "lachlan.smith@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Lachlan.Smith","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 72861,"firstName":
+        "Ethan","lastName": "Wilson","dob": "02/06/1998","middleName": "","emailAddress":
+        "ethan.wilson@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Ethan.Wilson","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 72862,"firstName":
+        "Thomas","lastName": "Lee","dob": "18/03/1997","middleName": "","emailAddress":
+        "thomas.lee@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Thomas.Lee","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 72863,"firstName":
+        "Cathlene","lastName": "Stophold","dob": "28/08/2001","middleName": "","emailAddress":
+        "cathlene.stophold@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Cathlene.Stophold","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 72864,"firstName":
+        "Jack","lastName": "Williams","dob": "30/06/1998","middleName": "","emailAddress":
+        "jack.williams@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Jack.Williams","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 72865,"firstName":
+        "Samuel","lastName": "Ryan","dob": "02/03/1995","middleName": "","emailAddress":
+        "samuel.ryan@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Samuel.Ryan","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 72866,"firstName":
+        "Jamie","lastName": "Anderson","dob": "30/05/1994","middleName": "","emailAddress":
+        "jamie.anderson@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "Jamie.Anderson","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 74713,"firstName":
+        "David","lastName": "DeLion","dob": "02/01/2021","middleName": "","emailAddress":
+        "david.delion@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "david.delion","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 74714,"firstName":
+        "Emma","lastName": "Ostermann","dob": "03/01/2021","middleName": "","emailAddress":
+        "emma.ostermann@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "emma.ostermann","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 74715,"firstName":
+        "John","lastName": "Cortes","dob": "04/01/2021","middleName": "","emailAddress":
+        "john.cortes@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "john.cortes","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 74716,"firstName":
+        "Joshua","lastName": "Medvecky","dob": "05/01/2021","middleName": "","emailAddress":
+        "joshua.medvecky@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "joshua.medvecky","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 74717,"firstName":
+        "Kimberly","lastName": "Gilmour","dob": "06/01/2021","middleName": "","emailAddress":
+        "kimberly.gilmour@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "kimberly.gilmour","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 74718,"firstName":
+        "Marcus","lastName": "Colby","dob": "07/01/2021","middleName": "","emailAddress":
+        "marcus.colby@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "marcus.colby","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 74719,"firstName":
+        "Melissa","lastName": "McKeveny","dob": "08/01/2021","middleName": "","emailAddress":
+        "melissa.mckeveny@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "melissa.mckeveny","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 74720,"firstName":
+        "Mike","lastName": "Compton","dob": "09/01/2021","middleName": "","emailAddress":
+        "mike.compton@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "mike.compton","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 74721,"firstName":
+        "Richard","lastName": "Meldrum","dob": "10/01/2021","middleName": "","emailAddress":
+        "richard.meldrum@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "richard.meldrum","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 74722,"firstName":
+        "Tom","lastName": "Crameri","dob": "11/01/2021","middleName": "","emailAddress":
+        "tom.crameri@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "tom.crameri","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 74723,"firstName":
+        "Tyler","lastName": "Lindon","dob": "12/01/2021","middleName": "","emailAddress":
+        "tyler.lindon@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "tyler.lindon","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 74724,"firstName":
+        "Zachary","lastName": "Chiaramonte","dob": "13/01/2021","middleName": "","emailAddress":
+        "zachary.chiaramonte@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "zachary.chiaramonte","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 74725,"firstName":
+        "Kirbie","lastName": "Huwa","dob": "14/01/2021","middleName": "","emailAddress":
+        "kirbie.huwa@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "kirbie.huwa","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "FEMALE","uuid": ""},{"userId": 74726,"firstName":
+        "Kiran","lastName": "Menon","dob": "15/01/2021","middleName": "","emailAddress":
+        "kiran.menon@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "kiran.menon","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 74727,"firstName":
+        "Geoff","lastName": "Austin","dob": "16/01/2021","middleName": "","emailAddress":
+        "geoff.austin@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "geoff.austin","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 74728,"firstName":
+        "Matthew","lastName": "Howell","dob": "17/01/2021","middleName": "","emailAddress":
+        "matthew.howell@smartabase.com","knownAs": "","organisationalId": -1,"username":
+        "matthew.howell","phoneNumbers": [{"type": "HOME","countryCode": "","prefix":
+        "","number": ""}],"sex": "MALE","uuid": ""},{"userId": 74800,"firstName":
+        "Travis","lastName": "Larson","dob": "29/12/2021","middleName": "","emailAddress":
+        "travis.larson@sb.com","knownAs": "","organisationalId": -1,"username": "travis.larson","sex":
+        "MALE","uuid": ""},{"userId": 74994,"firstName": "Mike","lastName": "Lacina","dob":
+        "01/03/2022","middleName": "","emailAddress": "mike.lacina@sb.com","knownAs":
+        "","organisationalId": -1,"username": "mike.lacina","sex": "MALE","uuid":
+        ""},{"userId": 75062,"firstName": "Haley","lastName": "Muller","dob": "01/04/2022","middleName":
+        "","emailAddress": "hm@sb.com","knownAs": "","organisationalId": -1,"username":
+        "haley.muller","sex": "FEMALE","uuid": ""},{"userId": 75063,"firstName": "Jimmy","lastName":
+        "Pritchard","dob": "01/04/2022","middleName": "","emailAddress": "jp@sb.com","knownAs":
+        "","organisationalId": -1,"username": "jimmy.pritchard","sex": "MALE","uuid":
+        ""},{"userId": 75357,"firstName": "Whitney","lastName": "Tramel","dob": "01/08/2022","middleName":
+        "","emailAddress": "wt@sb.com","knownAs": "","organisationalId": -1,"username":
+        "whitney.tramel","sex": "FEMALE","uuid": ""},{"userId": 75358,"firstName":
+        "Adam","lastName": "Holliday","dob": "01/08/2022","middleName": "","emailAddress":
+        "ah@sb.com","knownAs": "","organisationalId": -1,"username": "adam.holliday","sex":
+        "MALE","uuid": ""},{"userId": 75359,"firstName": "Kamryn","lastName": "Keilty","dob":
+        "01/08/2022","middleName": "","emailAddress": "kk@sb.com","knownAs": "","organisationalId":
+        -1,"username": "kamryn.keilty","sex": "FEMALE","uuid": ""},{"userId": 120855,"firstName":
+        "Python","lastName": "Connector","dob": "24/03/2025","middleName": "","emailAddress":
+        "python.connector@ams.com","knownAs": "","organisationalId": -1,"username":
+        "python.connector","sex": "UNSPECIFIED","uuid": ""},{"userId": 120890,"firstName":
+        "JohnUpdated","lastName": "Doe","dob": "01/01/1990","middleName": "","emailAddress":
+        "john.again.updated.doe@ams.com","knownAs": "","organisationalId": 0,"username":
+        "johnupdated.doe","phoneNumbers": [{"type": "OTHER","countryCode": "","prefix":
+        "","number": ""}],"addresses": [{"type": "ALTERNATIVE","address": "","suburb":
+        "","city": "","country": "","postcode": ""}],"sex": "FEMALE","uuid": "12345"},{"userId":
+        120891,"firstName": "TestUpdated","lastName": "Api","dob": "10/07/2023","middleName":
+        "","emailAddress": "test.update2.api@ams.com","knownAs": "","organisationalId":
+        0,"username": "testupdated.api","phoneNumbers": [{"type": "OTHER","countryCode":
+        "","prefix": "","number": ""}],"addresses": [{"type": "ALTERNATIVE","address":
+        "","suburb": "","city": "","country": "","postcode": ""}],"sex": "UNSPECIFIED","uuid":
+        "123"},{"userId": 120921,"firstName": "Athlete","lastName": "Test","dob":
+        "05/05/2025","middleName": "","emailAddress": "athlete.test@ams.com","knownAs":
+        "","organisationalId": -1,"username": "athlete.test","sex": "MALE","uuid":
+        ""},{"userId": 120958,"firstName": "JohnUpdated","lastName": "Doe","dob":
+        "01/01/1990","middleName": "","emailAddress": "johnupdated@ams.com","knownAs":
+        "","organisationalId": 0,"username": "john.updated","phoneNumbers": [{"type":
+        "OTHER","countryCode": "","prefix": "","number": ""}],"addresses": [{"type":
+        "ALTERNATIVE","address": "","suburb": "","city": "","country": "","postcode":
+        ""}],"sex": "FEMALE","uuid": "234223"},{"userId": 120959,"firstName": "Jane","lastName":
+        "Doe","dob": "02/02/1995","middleName": "","emailAddress": "jane.doe@ams.com","knownAs":
+        "","organisationalId": 0,"username": "jane.doe","sex": "UNSPECIFIED","uuid":
+        "456456456"},{"userId": 121077,"firstName": "Brandon","lastName": "Test","dob":
+        "07/05/2025","middleName": "","emailAddress": "brandon.test@ams.com","knownAs":
+        "","organisationalId": -1,"username": "brandon.test","sex": "UNSPECIFIED","uuid":
+        ""},{"userId": 121086,"firstName": "Athlete","lastName": "New","dob": "07/05/2025","middleName":
+        "","emailAddress": "new.ath@ams.com","knownAs": "","organisationalId": -1,"username":
+        "new.ath","sex": "UNSPECIFIED","uuid": ""},{"userId": 121152,"firstName":
+        "John","lastName": "Smith","dob": "01/11/2000","middleName": "Michael","emailAddress":
+        "john.smith@ams.com","knownAs": "Johnny","organisationalId": 0,"username":
+        "john.smith","sex": "MALE","uuid": "787878"},{"userId": 121153,"firstName":
+        "Jane","lastName": "Smith","dob": "02/12/1995","middleName": "","emailAddress":
+        "jane.smith@ams.com","knownAs": "","organisationalId": 0,"username": "jane.smith","sex":
+        "FEMALE","uuid": "898989"},{"userId": 121154,"firstName": "Bob","lastName":
+        "Smith","dob": "06/07/2003","middleName": "","emailAddress": "bob.smith@ams.com","knownAs":
+        "","organisationalId": 0,"username": "bob.smith","sex": "MALE","uuid": "090909"},{"userId":
+        121155,"firstName": "Karen","lastName": "Smith","dob": "04/09/2002","middleName":
+        "","emailAddress": "karen.smith@ams.com","knownAs": "","organisationalId":
+        0,"username": "karen.smith","sex": "FEMALE","uuid": "505050"}]}]}'
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Accept, Accept-Encoding, Access-Control-Allow-Headers, Authorization, Client-Security-Token,
+        Content-Type, Credentials, Origin, X-APP-ID, X-Requested-With
+      Access-Control-Allow-Methods:
+      - GET,HEAD,POST,OPTIONS
+      Access-Control-Max-Age:
+      - '3000'
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - "default-src\t'self' https://*.smartabase.com https://*.fusionsport.com https://fusionsport.com;
+        font-src\t'self' https://*.smartabase.com https://*.fusionsport.com data:
+        file:; style-src\t'self' 'unsafe-inline' https://*.smartabase.com https://*.fusionsport.com;
+        script-src\t'self' 'unsafe-inline' 'unsafe-eval' https://cdn.segment.com  https://www.googletagmanager.com
+        https://www.google-analytics.com https://ssl.google-analytics.com https://*.smartabase.com
+        https://*.fusionsport.com https://cdn.segment.com https://cmp.osano.com https://*.launchdarkly.com;
+        frame-src\t'self' https://www.youtube.com https://*.shinyapps.io https://*.smartabase.com
+        https://*.fusionsport.com https://fusionsport.com data:; frame-ancestors\t'self'
+        file:; img-src\t\t'self' https://*.smartabase.com https://www.google-analytics.com
+        https://google-analytics.com data: file:; connect-src\t'self' https://*.smartabase.com
+        https://api.segment.io https://cdn.segment.com https://www.google-analytics.com
+        https://google-analytics.com https://*.googleapis.com https://browser-intake-datadoghq.eu
+        https://api.segment.io cdn.segment.com https://*.api.osano.com https://api.integrations.smartabase.com
+        https://*.launchdarkly.com; worker-src\t'self' blob:; upgrade-insecure-requests; "
+      Date:
+      - Fri, 16 May 2025 14:48:37 GMT
+      Keep-Alive:
+      - timeout=5, max=1000
+      Referrer-Policy:
+      - strict-origin
+      Server:
+      - Apache
+      Strict-Transport-Security:
+      - max-age=63072000
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - 1; mode=block
+      session-header:
+      - Hyy2Vt685+7LgpJS+xVwClGF
+    status:
+      code: 200
+      message: OK
+version: 1
